@@ -115,6 +115,7 @@ data class OpenCanvasTrack(
     val title: String,
     val artist: String,
     val mode: OpenCanvasMode = OpenCanvasMode.LOOP_CANVAS,
+    val resolution: OpenCanvasResolution = OpenCanvasResolution.STANDARD_480P,
     val loopStartMs: Long = 0L,
     val loopEndMs: Long = 10000L,
     val audioOffsetMs: Long = 0L,
@@ -122,3 +123,46 @@ data class OpenCanvasTrack(
     val targetAspectRatio: Float = 9f / 16f,
     val source: String = "OpenCanvas",
 )
+
+/**
+ * Video stream resolution and dimensions configuration for OpenCanvas.
+ * Allows developers to customize target height and width or choose standard presets.
+ */
+@Serializable
+data class OpenCanvasResolution(
+    /** Maximum vertical height in pixels (e.g., 360, 480, 720, 1080). */
+    val maxHeight: Int = 480,
+    /** Optional maximum horizontal width in pixels (e.g., 640, 854, 1280, 1920). */
+    val maxWidth: Int? = null,
+    /** Friendly quality label (e.g., "360p", "480p", "720p", "1080p", "custom"). */
+    val label: String = "${maxHeight}p",
+) {
+    companion object {
+        val LOW_360P = OpenCanvasResolution(maxHeight = 360, maxWidth = 640, label = "360p")
+        val STANDARD_480P = OpenCanvasResolution(maxHeight = 480, maxWidth = 854, label = "480p")
+        val HD_720P = OpenCanvasResolution(maxHeight = 720, maxWidth = 1280, label = "720p")
+        val FULL_HD_1080P = OpenCanvasResolution(maxHeight = 1080, maxWidth = 1920, label = "1080p")
+        val AUTO = STANDARD_480P
+
+        /** Creates a custom resolution with explicit height and optional width. */
+        fun fromDimensions(height: Int, width: Int? = null): OpenCanvasResolution =
+            OpenCanvasResolution(maxHeight = height, maxWidth = width, label = if (width != null) "${width}x${height}" else "${height}p")
+
+        /** Parses a resolution string like "360", "480p", "720", "1080p". */
+        fun fromLabel(raw: String): OpenCanvasResolution = when (raw.lowercase().replace("p", "").trim()) {
+            "360" -> LOW_360P
+            "480" -> STANDARD_480P
+            "720" -> HD_720P
+            "1080" -> FULL_HD_1080P
+            else -> STANDARD_480P
+        }
+    }
+
+    /** Formats the yt-dlp video format selector for this resolution. */
+    fun toYtDlpFormat(): String {
+        val h = maxHeight.coerceAtLeast(240)
+        val wClause = if (maxWidth != null && maxWidth > 0) "[width<=$maxWidth]" else ""
+        return "bestvideo[height<=$h]$wClause[ext=mp4]/bestvideo[height<=$h]$wClause/bestvideo[ext=mp4]/best[ext=mp4]/best"
+    }
+}
+

@@ -30,6 +30,7 @@ object OpenCanvas {
      * @param artist Artist name (e.g., "The Weeknd")
      * @param durationSec Track duration in seconds (optional, helps candidate verification)
      * @param mode [OpenCanvasMode.LOOP_CANVAS] (8-12s chorus loop) or [OpenCanvasMode.FULL_SYNCED_VIDEO]
+     * @param resolution Target [OpenCanvasResolution] (e.g. 360p, 480p, 720p, 1080p, or custom height/width)
      * @return Resolved [OpenCanvasTrack], or null if no official video was matched.
      */
     suspend fun resolve(
@@ -37,8 +38,9 @@ object OpenCanvas {
         artist: String,
         durationSec: Long = 0L,
         mode: OpenCanvasMode = OpenCanvasMode.LOOP_CANVAS,
+        resolution: com.opencanvas.core.models.OpenCanvasResolution = com.opencanvas.core.models.OpenCanvasResolution.STANDARD_480P,
     ): OpenCanvasTrack? = withContext(Dispatchers.IO) {
-        val cacheKey = "$artist|$title|$mode".lowercase()
+        val cacheKey = "$artist|$title|$mode|${resolution.label}".lowercase()
         memoryCache[cacheKey]?.let { return@withContext it }
 
         // 1. Find the official music video
@@ -55,8 +57,8 @@ object OpenCanvas {
             0L to (if (candidate.durationSec > 0) candidate.durationSec * 1000L else 240000L)
         }
 
-        // 3. Resolve direct playable MP4 stream URL via yt-dlp
-        val playableStreamUrl = YouTubeStreamResolver.resolveVideoStreamUrl(videoId)
+        // 3. Resolve direct playable MP4 stream URL via yt-dlp at requested resolution
+        val playableStreamUrl = YouTubeStreamResolver.resolveVideoStreamUrl(videoId, resolution)
             ?: return@withContext null
 
         // 4. Construct resolved OpenCanvas track
@@ -66,6 +68,7 @@ object OpenCanvas {
             title = candidate.title.ifBlank { title },
             artist = artist,
             mode = mode,
+            resolution = resolution,
             loopStartMs = startMs,
             loopEndMs = endMs,
             audioOffsetMs = 0L,

@@ -142,12 +142,17 @@ object YouTubeStreamResolver {
     }
 
     /**
-     * Resolves a direct playable MP4 video stream URL using yt-dlp.
+     * Resolves a direct playable MP4 video stream URL using yt-dlp at the requested [resolution].
      */
-    fun resolveVideoStreamUrl(videoId: String): String? {
+    fun resolveVideoStreamUrl(
+        videoId: String,
+        resolution: com.opencanvas.core.models.OpenCanvasResolution = com.opencanvas.core.models.OpenCanvasResolution.STANDARD_480P,
+    ): String? {
+        val maxH = resolution.maxHeight
+        val maxW = resolution.maxWidth ?: 0
         val endpoints = listOf(
-            "http://127.0.0.1:18999/resolve?v=$videoId",
-            "http://10.0.2.2:18999/resolve?v=$videoId",
+            "http://127.0.0.1:18999/resolve?v=$videoId&max_height=$maxH&max_width=$maxW",
+            "http://10.0.2.2:18999/resolve?v=$videoId&max_height=$maxH&max_width=$maxW",
         )
         for (ep in endpoints) {
             val streamUrl = runCatching {
@@ -167,7 +172,7 @@ object YouTubeStreamResolver {
         val cliStreamUrl = runCatching {
             val pb = ProcessBuilder(
                 "python", "-m", "yt_dlp", "-g",
-                "-f", "bestvideo[height<=480][ext=mp4]/bestvideo[height<=360][ext=mp4]/bestvideo[height<=720][ext=mp4]/best",
+                "-f", resolution.toYtDlpFormat(),
                 "https://www.youtube.com/watch?v=$videoId"
             )
             pb.redirectErrorStream(true)
