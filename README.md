@@ -12,6 +12,17 @@
 
 ---
 
+<div align="center">
+  <img src="assets/opencanvas_demo.gif" width="340" alt="OpenCanvas Live Demo in BitChord" style="border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);" />
+  <br />
+  <p><em><b>Live OpenCanvas in action:</b> Dynamically streaming and vertically reframing YouTube music videos behind playback with zero servers.</em></p>
+  <p>
+    <a href="assets/opencanvas_android_showcase.mp4"><b>▶️ Watch Full HD Video with Audio (MP4)</b></a>
+  </p>
+</div>
+
+---
+
 ## 🌟 What is OpenCanvas?
 
 Spotify's **Canvas** (the short looping video that plays behind the song on the "Now Playing" screen) drives a **145% boost in track shares** and **20% more playlist additions**. However, **less than 5% of all streaming songs have a Canvas**, because Spotify requires verified artists to manually shoot and upload vertical clips. Open-source players like **BitChord** fail on over 95% of tracks because Apple Music and Tidal have very limited motion artwork, and Spotify requires user session cookies.

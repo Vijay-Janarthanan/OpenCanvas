@@ -167,7 +167,7 @@ object YouTubeStreamResolver {
         val cliStreamUrl = runCatching {
             val pb = ProcessBuilder(
                 "python", "-m", "yt_dlp", "-g",
-                "-f", "bestvideo[height<=720][ext=mp4]/bestvideo/best",
+                "-f", "bestvideo[height<=480][ext=mp4]/bestvideo[height<=360][ext=mp4]/bestvideo[height<=720][ext=mp4]/best",
                 "https://www.youtube.com/watch?v=$videoId"
             )
             pb.redirectErrorStream(true)
