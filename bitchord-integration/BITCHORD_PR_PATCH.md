@@ -3,7 +3,7 @@
 This file is the text of the pull request to [kushagrasinghx/BitChord](https://github.com/kushagrasinghx/BitChord)
 (base: the active version branch, `v1.8.1`) and of the proposal issue that goes with it, since BitChord's
 contribution guide asks for substantial features to be discussed first. The integration code itself is in
-the BitChord branch `feature/opencanvas-integration`; `OpenCanvasProvider.kt` and `sync_core.py` next to this
+the BitChord branch `pr/opencanvas-music-video-canvas` (three commits on top of `v1.8.1`); `OpenCanvasProvider.kt` and `sync_core.py` next to this
 file are the two pieces another host needs.
 
 ---
@@ -45,7 +45,7 @@ nothing is decoded or downloaded in full to find it.
   and about a second after on first play; a sharper (720p+) stream replaces the first one a moment later.
 - Seek in the song and the video lands on the right second (about 0.5 s on an emulator); skip and the next
   track's video starts at once.
-- Settings (already in this branch's earlier commits): OpenCanvas on/off and stream resolution; the existing
+- Settings: an OpenCanvas switch and a stream resolution choice (360p–1080p) on both platforms; the existing
   "animated canvas" switch and "canvas over cellular" guard apply to it too.
 
 ### How it works
@@ -93,6 +93,7 @@ One Windows machine, home connection, empty cache, no community maps, final code
 - `desktopApp/.../DesktopCanvas*.kt` — the same for the FFmpeg-based desktop player.
 - `CanvasRepository` / `DesktopCanvasClient` — see "Behaviour changes to existing code".
 - `PlaybackService` — calls `CanvasRepository.prefetch(song)` when a track starts.
+- `AppSettings`, `SettingsSheet`, `DesktopAppearanceSettings`, `DesktopApp` — the switch and the resolution choice.
 
 ### Behaviour changes to existing code (please read these)
 
@@ -127,11 +128,10 @@ undocumented and could change, which is why the stream backend is pluggable — 
 
 - OpenCanvas core: 138 JVM tests, 0 failures (sync maths, MP4 parsing, ranking, retries, ranged source,
   end-to-end session against a local server with synthetic MP4 files, prefetch and restart behaviour).
-- BitChord: `:desktopApp:test --tests "*DesktopCanvas*"` (15 tests) passes; `:app:installDevDebug` and
-  `:desktopApp:compileKotlin` build.
+- BitChord: `:app:testDevDebugUnitTest` (972 tests) and `:desktopApp:test` (341 tests, including the 15 canvas
+  tests): 0 failures; `:app:installDevDebug` builds.
 - Run by hand: Android emulator (Pixel 9 Pro image, 4 GB) and the Windows desktop app, with an empty cache, a
   persisted map, a restart, and two seeks; log lines and frame-matching numbers above.
-- I did **not** run the full `testDevDebugUnitTest` suite for this description; please let CI do it.
 
 ### Size and how to split it
 
@@ -144,6 +144,5 @@ integration, (4) desktop integration. Tell me which order you like.
 
 - [x] based on the active version branch
 - [x] focused on one feature (the canvas), with the unrelated local build tweaks left out
-- [x] tests for new logic live with the library; BitChord's canvas tests still pass
+- [x] tests for new logic live with the library; BitChord's unit tests all pass locally
 - [x] no new third-party dependency
-- [ ] CI on the full unit-test suite (please run)
