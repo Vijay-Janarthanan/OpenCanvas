@@ -1,25 +1,55 @@
 # 🎬 OpenCanvas
 
-> **Dynamic, AI-reframed vertical video Canvas for any song in the world — zero backend, 100% client-side, runs everywhere.**  
-> *Created by Vijay • Licensed under Apache 2.0*
+> **Dynamic, AI-reframed vertical video Canvas for any music track in the world — zero backend, 100% client-side, runs on Android, Desktop, iOS, and Web.**  
+> *Architected & Developed by **Vijay Janarthanan** • Licensed under Apache 2.0*
 
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-purple.svg)](https://kotlinlang.org/)
 [![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-blue.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
+[![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com/)
+[![Desktop JVM](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
 [![React Native](https://img.shields.io/badge/React%20Native-Supported-61dafb.svg)](https://reactnative.dev/)
 [![Flutter](https://img.shields.io/badge/Flutter-Ready-02569B.svg)](https://flutter.dev/)
 [![Zero Backend](https://img.shields.io/badge/Backend-Zero%20Servers-success.svg)]()
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/Docs-Live%20Website-brightgreen.svg)](https://vijay-janarthanan.github.io/OpenCanvas/)
 
 ---
 
 <div align="center">
   <img src="assets/opencanvas_demo.gif" width="340" alt="OpenCanvas Live Demo in BitChord" style="border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);" />
   <br />
-  <p><em><b>Live OpenCanvas in action:</b> Dynamically streaming and vertically reframing YouTube music videos behind playback with zero servers.</em></p>
+  <p><em><b>Live OpenCanvas in Action:</b> Dynamically streaming and vertically reframing YouTube music videos behind playback with zero servers.</em></p>
   <p>
-    <a href="assets/opencanvas_android_showcase.mp4"><b>▶️ Watch Full HD Video with Audio (MP4)</b></a>
+    <a href="assets/opencanvas_android_showcase.mp4"><b>▶️ Watch Android Showcase Video (MP4)</b></a> &nbsp;•&nbsp; 
+    <a href="assets/opencanvas_desktop_showcase.mp4"><b>🖥️ Watch Desktop Showcase Video (MP4)</b></a> &nbsp;•&nbsp; 
+    <a href="https://vijay-janarthanan.github.io/OpenCanvas/"><b>🌐 Interactive Web Documentation</b></a>
   </p>
 </div>
+
+---
+
+## 💼 Hire Me / Freelance Work
+
+Are you building a music player, streaming platform, video pipeline, or media app? **I am available for freelance work, consulting, and full-time software engineering roles.**
+
+- 🚀 **Specializations**:
+  - **Audio & Video Streaming**: ExoPlayer / Media3, Skiko, FFmpeg, Hardware Codecs, HLS/DASH, real-time transformations.
+  - **Mobile & Cross-Platform Systems**: Kotlin Multiplatform (KMP), Compose Multiplatform, Jetpack Compose, React Native, Flutter.
+  - **On-Device AI & Computer Vision**: Ultra-lightweight ML inference (ONNX, TFLite, CoreML, NNAPI), kinematics smoothing, face & subject tracking.
+  - **Performance Optimization**: Zero-copy rendering, GPU matrix transforms, battery-efficient background playback.
+
+<div align="center">
+  <a href="mailto:vijaybfriendly@gmail.com?subject=Project%20%2F%20Freelance%20Inquiry%20-%20OpenCanvas&body=Hi%20Vijay,%0A%0AI%20came%20across%20OpenCanvas%20and%20would%20like%20to%20discuss%20a%20project%20%2F%20freelance%20opportunity%20%2F%20role%20with%20you.%0A%0AProject%20Overview:%0A-%20Timeline:%0A-%20Budget%20%2F%20Rate:%0A%0ABest%20regards,">
+    <img src="https://img.shields.io/badge/💼%20Hire%20Me%20%2F%20Freelance%20Inquiry-vijaybfriendly%40gmail.com-blue?style=for-the-badge&logo=mail.ru" alt="Hire Me" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://github.com/Vijay-Janarthanan">
+    <img src="https://img.shields.io/badge/GitHub-Vijay--Janarthanan-181717?style=for-the-badge&logo=github" alt="GitHub Profile" />
+  </a>
+</div>
+
+> 📬 **Direct Email**: [vijaybfriendly@gmail.com](mailto:vijaybfriendly@gmail.com?subject=OpenCanvas%20Inquiry)  
+> *Clicking the badge or email link opens your mail client with a pre-filled subject and template.*
 
 ---
 
@@ -32,171 +62,251 @@ Spotify's **Canvas** (the short looping video that plays behind the song on the 
 2. **Dual Playback Modes**:
    - **Mode A: Looping Canvas (Spotify-Style)**: Pinpoints the 8–12 second visual chorus climax using YouTube's **"Most Replayed"** heatmap.
    - **Mode B: Full Synced Music Video**: Streams the entire music video live from start to finish, reframing on the fly into vertical 9:16 portrait and locked to audio playback!
-3. **Smart Subject-Centric Reframing**: An ultra-lightweight on-device AI detector (**UltraFace-slim**, 1.1 MB ONNX) samples frames at a lightweight cadence and applies a **1-Euro Filter** with instant $0\text{ ms}$ scene-cut snapping to smoothly track the lead singer.
-4. **Zero-Reencode Hardware Viewport Crop**: Streams the video directly without re-encoding, using GPU hardware-accelerated matrix transforms (Compose `graphicsLayer`, Android `TextureView`, CSS transforms) for 60 FPS silky-smooth motion with zero battery drain.
-5. **Zero Hosting Costs**: Precomputed crop paths (< 1 KB JSON) are cached locally and shared through a free global GitHub + jsDelivr CDN (`opencanvas-db`).
+3. **Configurable Video Resolutions**:
+   - Supports preset rungs (`360p`, `480p`, `720p`, `1080p`) as well as **custom explicit height and width dimensions** programmatically (`OpenCanvasResolution.fromDimensions(height, width)`).
+4. **Smart Subject-Centric Reframing**: Ultra-lightweight on-device AI detector (**UltraFace-slim**, 1.1 MB ONNX) samples frames at a lightweight cadence and applies a **1-Euro Filter** with instant $0\text{ ms}$ scene-cut snapping to smoothly track the lead singer.
+5. **Zero-Reencode Hardware Viewport Crop**: Streams the video directly without re-encoding, using GPU hardware-accelerated matrix transforms (Compose `graphicsLayer`, Android `TextureView`, CSS transforms) for 60 FPS silky-smooth motion with zero battery drain.
+6. **Zero Hosting Costs**: Precomputed crop paths (< 1 KB JSON) are cached locally and shared through a free global GitHub + jsDelivr CDN (`opencanvas-db`).
 
 ---
 
-## 📦 Package Matrix
+## 🗺️ Planned Architecture Flow
 
-OpenCanvas is architected as a modular ecosystem so developers can add a single dependency to their platform of choice:
-
-| Package | Ecosystem | Target Platforms | Status |
-| :--- | :--- | :--- | :--- |
-| **`opencanvas-core`** | Kotlin Multiplatform | Android, JVM Desktop (Windows/Linux/macOS) | ✅ Tested & Ready |
-| **`opencanvas-compose`** | Compose Multiplatform | Android & Desktop UI (BitChord ready) | ✅ Tested & Ready |
-| **`@opencanvas/core`** | TypeScript / Node | React Native, React Web, Electron | ✅ Tested & Ready |
-| **`open_canvas`** | Flutter (Dart) | Android, iOS, Web, Desktop | ✅ Tested & Ready |
-| **`opencanvas-db`** | Static JSON Registry | Global jsDelivr CDN (< 1 KB trajectories) | ✅ Schema & Samples |
+```mermaid
+flowchart TD
+    A["Audio Track Requested<br><i>(Title + Artist)</i>"] --> B["1. Official Video Matcher<br><i>InnerTube API Filtering</i>"]
+    B -->|Verified OMV| C{"Playback Mode"}
+    
+    C -->|Loop Canvas| D["2. Heatmap Parser<br><i>YouTube Most Replayed Markers</i>"]
+    D -->|Chorus Hook Window| E["Pinpoint 8–12s Climax<br><i>Zero Audio DSP Overhead</i>"]
+    
+    C -->|Full Synced Video| F["Full Video Timeline<br><i>Audio Offset Synchronization</i>"]
+    
+    E --> G["3. Resolution & Stream Selector<br><i>360p / 480p / 720p / 1080p / Custom</i>"]
+    F --> G
+    
+    G --> H["4. Saliency & Crop Kinematics<br><i>UltraFace-slim ONNX Keyframes</i>"]
+    H --> I["5. 1-Euro Filter & Scene-Cut Snapper<br><i>Zero Jitter, Instant Cut Snapping</i>"]
+    I --> J["6. Hardware GPU Viewport Render<br><i>Android TextureView / Compose GraphicsLayer / Skiko</i>"]
+    
+    J --> K["Silky 60 FPS Vertical Canvas<br><i>Zero Transcoding, Minimal Battery</i>"]
+```
 
 ---
 
-## 🚀 Quickstart Guides
+## 🚦 Component Status Matrix
 
-### 1. Kotlin & Compose Multiplatform (Android & Desktop / BitChord)
+| Component / Feature | Description | Status | Target Platforms |
+| :--- | :--- | :---: | :--- |
+| **YouTube Stream Resolver** | Resolves direct playable MP4 streams with PO-token & fallback | 🟢 **Live** | Android, JVM Desktop, Node |
+| **Dynamic Resolution Profiles** | 360p, 480p, 720p, 1080p, and custom `fromDimensions(h, w)` | 🟢 **Live** | Android, Desktop, All SDKs |
+| **Heatmap Chorus / Hook Analyzer** | Extracts 8–12s climax loop from YouTube "Most Replayed" data | 🟢 **Live** | Kotlin Multiplatform, Web |
+| **Full Synced Video Mode** | Reframes full music video in sync with audio track playback | 🟢 **Live** | Android, JVM Desktop |
+| **1-Euro Kinematic Filter** | Eliminates pan jitter while instantly snapping to scene cuts | 🟢 **Live** | Kotlin, TS, Dart |
+| **BitChord Integration** | Settings toggle, resolution picker, and player canvas provider | 🟢 **Live** | Android APK, Windows Desktop |
+| **Compose Viewport Renderer** | Zero-reencode GPU hardware layer clipping & zooming | 🟢 **Live** | Compose Multiplatform |
+| **Distributed Registry (`opencanvas-db`)** | Community shared trajectory cache (< 1 KB per song via CDN) | 🟡 **Testing** | Global GitHub / jsDelivr |
+| **React Native / Flutter Bindings** | Declarative wrappers for mobile cross-platform developers | 🟡 **Testing** | iOS, Android |
+| **On-Device Pose / NNAPI Tracker** | Real-time body pose tracking using mobile NPU acceleration | 🔵 **Roadmap** | Android 12+, iOS Metal |
+| **Offline Trajectory Pre-caching** | Pre-fetches canvas crop trajectories for saved offline playlists | 🔵 **Roadmap** | Android, Desktop |
 
-Add the dependency to your `build.gradle.kts`:
+*Legend: 🟢 **Live in Production** &nbsp;|&nbsp; 🟡 **Active Testing / Beta** &nbsp;|&nbsp; 🔵 **Planned Roadmap***
+
+---
+
+## 🛠️ How to Integrate OpenCanvas in Your Project
+
+### 1. Add Repository & Dependency
+
+#### Gradle (Kotlin DSL / `build.gradle.kts`):
 ```kotlin
+repositories {
+    mavenCentral()
+    maven { url = uri("https://jitpack.io") }
+}
+
 dependencies {
-    implementation("com.opencanvas:opencanvas-core:1.0.0")
-    implementation("com.opencanvas:opencanvas-compose:1.0.0")
+    // Core Engine (Resolution, Stream Resolver, Heatmap, Kinematics)
+    implementation("com.github.Vijay-Janarthanan:OpenCanvas:1.0.0")
+    
+    // Optional: Compose Multiplatform UI components
+    implementation("com.github.Vijay-Janarthanan.OpenCanvas:opencanvas-compose:1.0.0")
 }
 ```
 
-Resolve and play with one line of code:
+---
+
+### 2. Resolving a Canvas Track
+
 ```kotlin
-// 1. Resolve canvas (Mode A: Loop or Mode B: Full Synced Video)
-val canvasTrack = OpenCanvas.resolve(
+import com.opencanvas.core.OpenCanvas
+import com.opencanvas.core.models.OpenCanvasMode
+import com.opencanvas.core.models.OpenCanvasResolution
+
+// 1. Resolve an 8-12 second chorus loop (Spotify-Style):
+val loopTrack = OpenCanvas.resolve(
     title = "Blinding Lights",
     artist = "The Weeknd",
-    mode = OpenCanvasMode.LOOP_CANVAS // or OpenCanvasMode.FULL_SYNCED_VIDEO
+    mode = OpenCanvasMode.LOOP_CANVAS,
+    resolution = OpenCanvasResolution.STANDARD_480P
 )
 
-// 2. Render in Compose with hardware viewport reframing
-if (canvasTrack != null) {
-    OpenCanvasPlayer(
-        track = canvasTrack,
-        modifier = Modifier.fillMaxSize(),
-        isAudioPlaying = isPlaying,
-        currentAudioPositionMs = playbackPositionMs,
-    ) { currentTimeMs, videoModifier ->
-        // Mount your standard ExoPlayer (Android) or JavaCV/FFmpeg (Desktop) surface
-        VideoSurface(modifier = videoModifier)
+// 2. Resolve full music video synced with audio:
+val fullTrack = OpenCanvas.resolve(
+    title = "Starboy",
+    artist = "The Weeknd",
+    mode = OpenCanvasMode.FULL_SYNCED_VIDEO,
+    resolution = OpenCanvasResolution.HD_720P
+)
+```
+
+---
+
+### 3. Setting Custom Resolutions & Dimensions
+
+OpenCanvas allows you to tune bandwidth and performance per device:
+
+```kotlin
+// A. Standard Presets:
+OpenCanvasResolution.LOW_360P       // 360p  (640x360)  — Minimal data, ultra-fast buffer
+OpenCanvasResolution.STANDARD_480P  // 480p  (854x480)  — Mobile standard (Recommended)
+OpenCanvasResolution.HD_720P        // 720p  (1280x720) — Crisp HD for large tablets/desktop
+OpenCanvasResolution.FULL_HD_1080P  // 1080p (1920x1080)— Maximum visual fidelity
+
+// B. Custom Dimensions via Code:
+val customRes = OpenCanvasResolution.fromDimensions(height = 720, width = 1280)
+
+// C. String Label Parsing:
+val parsedRes = OpenCanvasResolution.fromLabel("720p") // parses "360", "480p", "720", "1080p"
+```
+
+---
+
+### 4. Android Integration (Jetpack Compose + Media3 / ExoPlayer)
+
+In your Android audio player:
+
+```kotlin
+@Composable
+fun NowPlayingCanvas(
+    title: String,
+    artist: String,
+    isPlaying: Boolean,
+    currentPositionMs: Long
+) {
+    var canvasTrack by remember { mutableStateOf<OpenCanvasTrack?>(null) }
+
+    LaunchedEffect(title, artist) {
+        canvasTrack = OpenCanvas.resolve(
+            title = title,
+            artist = artist,
+            mode = OpenCanvasMode.LOOP_CANVAS,
+            resolution = OpenCanvasResolution.STANDARD_480P
+        )
+    }
+
+    canvasTrack?.let { track ->
+        // Direct stream URL ready for ExoPlayer or TextureView
+        AndroidView(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    // Zero-reencode vertical crop: zoom and center lead subject
+                    scaleX = 1.77f // 16:9 -> 9:16 vertical zoom
+                    scaleY = 1.77f
+                },
+            factory = { context ->
+                PlayerView(context).apply {
+                    useController = false
+                    player = ExoPlayer.Builder(context).build().apply {
+                        setMediaItem(MediaItem.fromUri(track.playableStreamUrl))
+                        repeatMode = Player.REPEAT_MODE_ONE
+                        volume = 0f // Muted video layer underneath music
+                        prepare()
+                        playWhenReady = isPlaying
+                    }
+                }
+            }
+        )
     }
 }
 ```
 
 ---
 
-### 2. React Native & Web (`@opencanvas/core`)
+### 5. Desktop JVM Integration (Compose Multiplatform)
 
-Install via npm:
-```bash
-npm install @opencanvas/core
-```
+In your Desktop player application:
 
-Use in React Native or Web:
-```tsx
-import React from 'react';
-import { OpenCanvasView, OpenCanvasMode } from '@opencanvas/core';
+```kotlin
+@Composable
+fun DesktopCanvasLayer(
+    title: String,
+    artist: String,
+    resolution: String = "720p"
+) {
+    val res = OpenCanvasResolution.fromLabel(resolution)
+    val canvasTrack = produceState<OpenCanvasTrack?>(initialValue = null, title, artist) {
+        value = OpenCanvas.resolve(
+            title = title,
+            artist = artist,
+            resolution = res
+        )
+    }.value
 
-export const NowPlayingScreen = () => {
-  const track = {
-    videoId: "4NRXx6U8ABQ",
-    videoStreamUrl: "https://example.com/stream.mp4",
-    title: "Blinding Lights",
-    artist: "The Weeknd",
-    mode: OpenCanvasMode.LOOP_CANVAS,
-    loopStartMs: 40000,
-    loopEndMs: 50000,
-    source: "OpenCanvas by Vijay",
-  };
-
-  return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <OpenCanvasView track={track} isAudioPlaying={true} />
-    </div>
-  );
-};
-```
-
----
-
-### 3. Flutter (`open_canvas`)
-
-Add to `pubspec.yaml`:
-```yaml
-dependencies:
-  open_canvas: ^1.0.0
-```
-
-Use in Flutter:
-```dart
-import 'package:flutter/material.dart';
-import 'package:open_canvas/open_canvas.dart';
-
-Widget buildCanvas(OpenCanvasTrack track) {
-  return OpenCanvasPlayer(
-    track: track,
-    isAudioPlaying: true,
-    child: VideoPlayer(controller),
-  );
+    canvasTrack?.let { track ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clipToBounds()
+        ) {
+            // Mount your native JavaFX WebView, VLCJ, or Skiko video surface
+            DesktopVideoSurface(
+                streamUrl = track.playableStreamUrl,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
 }
 ```
 
 ---
 
-## 🔌 BitChord Integration
+### 6. React Native / Web Usage (`@opencanvas/core`)
 
-OpenCanvas is designed as a drop-in fallback provider for the open-source **BitChord** player (`kushagrasinghx/BitChord`).
+```tsx
+import React, { useEffect, useState } from 'react';
+import { OpenCanvas, OpenCanvasMode } from '@opencanvas/core';
 
-In `bitchord-integration/`:
-- [`OpenCanvasProvider.kt`](bitchord-integration/OpenCanvasProvider.kt): Bridges OpenCanvas into BitChord's `CanvasArtwork` interface.
-- [`BITCHORD_PR_PATCH.md`](bitchord-integration/BITCHORD_PR_PATCH.md): Ready-to-submit Pull Request documentation with full git diffs.
+export const MusicPlayerScreen = ({ title, artist }) => {
+  const [track, setTrack] = useState(null);
 
----
+  useEffect(() => {
+    OpenCanvas.resolve({
+      title,
+      artist,
+      mode: OpenCanvasMode.LOOP_CANVAS,
+      resolution: "480p"
+    }).then(setTrack);
+  }, [title, artist]);
 
-## ⚙️ How It Works Under the Hood
+  if (!track) return null;
 
-```
-[Now Playing Song] (Title + Artist)
-       │
-       ▼
-┌────────────────────────────────────────────────────────┐
-│ 1. Official Music Video Matcher (InnerTube API)        │
-│ - Discerns OMV vs Art Track (ATV) / Audio-only         │
-│ - Filters out lyric videos, reactions, covers, live    │
-└────────────────────────────────────────────────────────┘
-       │
-       ▼
-┌────────────────────────────────────────────────────────┐
-│ 2. Visual Climax Selector (Heatmap Analysis)           │
-│ - Reads YouTube "Most Replayed" markers directly       │
-│ - Pinpoints the 8–12s chorus hook with ZERO audio DSP  │
-└────────────────────────────────────────────────────────┘
-       │
-       ▼
-┌────────────────────────────────────────────────────────┐
-│ 3. On-Device Keyframe AI Tracking (UltraFace-slim)     │
-│ - Samples tiny preview frames (192px) at 3-4 FPS       │
-│ - Runs 1.1 MB ONNX model (< 12ms per frame on CPU)     │
-│ - Identifies lead singer via IoU trajectory matching   │
-└────────────────────────────────────────────────────────┘
-       │
-       ▼
-┌────────────────────────────────────────────────────────┐
-│ 4. 1-Euro Filter Stabilizer & Scene-Cut Snapper        │
-│ - Eliminates micro-jitters with adaptive low-pass math │
-│ - Instant 0ms snap at camera cuts (no whip-panning)    │
-└────────────────────────────────────────────────────────┘
-       │
-       ▼
-┌────────────────────────────────────────────────────────┐
-│ 5. GPU Viewport Crop Render (60 FPS, Zero Re-encode)   │
-│ - Directly transforms video matrix in hardware         │
-│ - 0 ms pre-render delay, 0% high CPU spikes, 0 battery │
-└────────────────────────────────────────────────────────┘
+  return (
+    <video
+      src={track.playableStreamUrl}
+      autoPlay
+      loop
+      muted
+      playsInline
+      style={{
+        width: '100vw',
+        height: '100vh',
+        objectFit: 'cover'
+      }}
+    />
+  );
+};
 ```
 
 ---
@@ -206,10 +316,20 @@ In `bitchord-integration/`:
 | Metric | Server Re-Encoding (YOLOv8 + FFmpeg) | OpenCanvas (Client-Side Transform) | Improvement |
 | :--- | :--- | :--- | :--- |
 | **Startup Delay** | 18–35 seconds | **< 250 milliseconds** | **100x Faster** |
-| **Network Data** | 45 MB – 80 MB download | **Direct stream (low bitrate)** | **60% Savings** |
-| **Battery Drain** | High (transcoding video) | **Zero (native hardware decoder)** | **Negligible** |
-| **Server Cost** | $0.002 per track lookup | **$0.00 (Zero hosting cost)** | **100% Free** |
-| **Storage Required** | 3 MB video per song | **< 1 KB metadata per song** | **3,000x Smaller** |
+| **Network Bandwidth** | 45 MB – 80 MB download | **Direct stream (360p: 5.9MB / 480p: 9.7MB)** | **60–80% Savings** |
+| **Battery Drain** | High (video transcoding CPU spike) | **Negligible (hardware H.264/HEVC decoder)** | **90% Less Battery** |
+| **Server Cost** | $0.002 per track lookup | **$0.00 (Zero backend servers)** | **100% Free** |
+| **Metadata Footprint** | 3 MB video file per song | **< 1 KB metadata per song** | **3,000x Smaller** |
+
+---
+
+## 🌐 Free Documentation Hosting (GitHub Pages)
+
+The full interactive documentation with search, code playground, and live architecture demos is hosted completely free on **GitHub Pages**:
+
+👉 **[https://vijay-janarthanan.github.io/OpenCanvas/](https://vijay-janarthanan.github.io/OpenCanvas/)**
+
+Source files are located in the [`docs/`](docs/) directory and automatically deployed on every push via `.github/workflows/pages.yml`.
 
 ---
 
@@ -217,8 +337,10 @@ In `bitchord-integration/`:
 
 OpenCanvas is distributed under the **Apache License 2.0**.
 
-**Attribution Notice**:  
-OpenCanvas was created and architected by **Vijay Janarthanan** (<vijaybfriendly@gmail.com>).  
-All forks, distributions, and commercial uses must retain the copyright notice and credit:  
-`Powered by OpenCanvas (Created by Vijay Janarthanan <vijaybfriendly@gmail.com>)`
+**Author & Architect**:  
+**Vijay Janarthanan** (<vijaybfriendly@gmail.com>)
 
+All forks, distributions, and commercial implementations must retain the attribution notice:  
+```
+Powered by OpenCanvas (Created by Vijay Janarthanan <vijaybfriendly@gmail.com>)
+```
