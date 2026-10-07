@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.sp
 import com.opencanvas.core.filter.CropKinematics
 import com.opencanvas.core.models.OpenCanvasMode
 import com.opencanvas.core.models.OpenCanvasTrack
+import com.opencanvas.core.models.SyncStage
+import com.opencanvas.core.sync.CanvasSyncPolicy
 
 /**
  * Modern, hardware-accelerated Compose UI player for OpenCanvas.
@@ -35,6 +37,12 @@ import com.opencanvas.core.models.OpenCanvasTrack
  * Dynamically reframes widescreen video into a vertical 9:16 portrait viewport
  * at 60 FPS using GPU graphicsLayer translation, keeping the primary artist
  * centered with zero re-encoding.
+ *
+ * A [OpenCanvasMode.FULL_SYNCED_VIDEO] track follows the song: [videoContent] is handed the video
+ * position that belongs to [currentAudioPositionMs] through the track's song-to-video map
+ * ([OpenCanvasTrack.syncMap]), so a seek in the song moves the picture to the right second, and
+ * the picture is hidden where the map has no matching scene or the track has no measured map. The
+ * host keeps its video player at that position (see [CanvasSyncPolicy] for the drift rules).
  */
 @Composable
 fun OpenCanvasPlayer(
@@ -45,6 +53,8 @@ fun OpenCanvasPlayer(
     showAttributionBadge: Boolean = true,
     videoContent: @Composable (currentTimeMs: Long, modifier: Modifier) -> Unit,
 ) {
+    val policy = remember(track) { CanvasSyncPolicy(track.syncMap(), track.videoDurationMs) }
+    val synced = track.mode == OpenCanvasMode.FULL_SYNCED_VIDEO
     var playbackTimeMs by remember(track) {
         mutableLongStateOf(
             if (track.mode == OpenCanvasMode.LOOP_CANVAS) track.loopStartMs else 0L
@@ -54,8 +64,8 @@ fun OpenCanvasPlayer(
     // High-precision frame clock loop for playback pacing
     LaunchedEffect(track, isAudioPlaying, currentAudioPositionMs) {
         if (track.mode == OpenCanvasMode.FULL_SYNCED_VIDEO) {
-            // In full video mode, lock to the audio track player timestamp
-            playbackTimeMs = (currentAudioPositionMs + track.audioOffsetMs).coerceAtLeast(0L)
+            // In full video mode the picture follows the song through the measured map
+            playbackTimeMs = policy.targetVideoMs(currentAudioPositionMs).coerceAtLeast(0L)
         } else {
             // In loop canvas mode, loop smoothly within [loopStartMs, loopEndMs]
             val loopDuration = (track.loopEndMs - track.loopStartMs).coerceAtLeast(1000L)
@@ -111,12 +121,17 @@ fun OpenCanvasPlayer(
             videoHeight = videoHeight,
         )
 
+        // A synced video is only shown while the map says this stretch of the song has its picture
+        val pictureVisible = !synced ||
+            (track.syncStage == SyncStage.MEASURED && policy.isVisible(currentAudioPositionMs))
+
         // Render video surface with hardware graphicsLayer translation
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer {
                     this.translationX = translationX
+                    this.alpha = if (pictureVisible) 1f else 0f
                 }
         ) {
             videoContent(playbackTimeMs, Modifier.fillMaxSize())
