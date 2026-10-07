@@ -1,0 +1,89 @@
+name: "✨ Feature Request"
+description: "Suggest a new feature or enhancement"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea to make OpenCanvas even better? We'd love to hear it! Please describe your feature request below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Feature Description"
+      description: "What feature would you like to add or what would you like to improve?"
+      placeholder: "e.g., Support for audio-offset-aware frame-locking so the video syncs perfectly with audio playback"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem It Solves"
+      description: "What problem or limitation does this feature address?"
+      placeholder: "e.g., Currently the canvas video loops independently from audio, creating a jarring experience when the video ends before the song."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed Solution"
+      description: "How do you envision this feature working? Any implementation ideas?"
+      placeholder: "e.g., Calculate audio offset and adjust the canvas playback position to match the audio's current timestamp"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternative Approaches"
+      description: "Are there other ways to solve this?"
+      placeholder: "e.g., Could also pause canvas at song end, or use variable playback speed"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: "Relevant Platform(s)"
+      multiple: true
+      options:
+        - "Android"
+        - "Desktop (JVM)"
+        - "Web/React"
+        - "Flutter"
+        - "All platforms"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priority"
+      description: "How important is this feature to you?"
+      options:
+        - "Low"
+        - "Medium"
+        - "High"
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "Additional Context"
+      description: "Any screenshots, diagrams, or references?"
+      placeholder: "You can paste images or links here"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I've searched for similar feature requests"
+          required: true
+        - label: "This feature isn't already on the roadmap"
+          required: false

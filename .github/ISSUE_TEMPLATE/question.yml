@@ -1,0 +1,47 @@
+name: "❓ Question"
+description: "Ask a question about OpenCanvas usage, features, or integration"
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your question! Please provide as much detail as possible to help us assist you.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: "Your Question"
+      description: "What would you like to know about OpenCanvas?"
+      placeholder: "e.g., How do I integrate OpenCanvas with my React Native app?"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: "Platform"
+      options:
+        - "Android"
+        - "Desktop (Windows/macOS/Linux)"
+        - "Web/React"
+        - "Flutter"
+        - "Other"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "Additional Context"
+      description: "Any code snippets, error messages, or other details that might help"
+      placeholder: "Paste code or logs here"
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Checklist"
+      options:
+        - label: "I've searched for similar questions in existing issues"
+          required: true
+        - label: "I've checked the documentation at https://vijay-janarthanan.github.io/OpenCanvas/"
+          required: false

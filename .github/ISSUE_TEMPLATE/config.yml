@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a Question
+    url: https://github.com/Vijay-Janarthanan/OpenCanvas/issues/new?template=question.yml
+    about: General questions about OpenCanvas usage and features
+  - name: Report a Bug
+    url: https://github.com/Vijay-Janarthanan/OpenCanvas/issues/new?template=bug_report.yml
+    about: Something is broken or not working as expected
+  - name: Request a Feature
+    url: https://github.com/Vijay-Janarthanan/OpenCanvas/issues/new?template=feature_request.yml
+    about: Suggest a new feature or enhancement

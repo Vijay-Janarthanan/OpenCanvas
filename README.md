@@ -1,346 +1,287 @@
 # 🎬 OpenCanvas
 
-> **Dynamic, AI-reframed vertical video Canvas for any music track in the world — zero backend, 100% client-side, runs on Android, Desktop, iOS, and Web.**  
-> *Architected & Developed by **Vijay Janarthanan** • Licensed under Apache 2.0*
+> **The official music video of any song, playing full-screen behind your player and locked to the song — it jumps when the user seeks, starts with the next track, and never loops. Runs inside your app on Android and desktop JVM: no server, no helper process, no API key.**
+> *Written by **Vijay Janarthanan**, Software Developer • Apache 2.0*
 
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-purple.svg)](https://kotlinlang.org/)
-[![Compose Multiplatform](https://img.shields.io/badge/Compose-Multiplatform-blue.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com/)
 [![Desktop JVM](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)](https://www.jetbrains.com/lp/compose-multiplatform/)
-[![React Native](https://img.shields.io/badge/React%20Native-Supported-61dafb.svg)](https://reactnative.dev/)
-[![Flutter](https://img.shields.io/badge/Flutter-Ready-02569B.svg)](https://flutter.dev/)
-[![Zero Backend](https://img.shields.io/badge/Backend-Zero%20Servers-success.svg)]()
+[![Backend](https://img.shields.io/badge/Backend-none-success.svg)]()
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![GitHub Pages](https://img.shields.io/badge/Docs-Live%20Website-brightgreen.svg)](https://vijay-janarthanan.github.io/OpenCanvas/)
+[![Docs](https://img.shields.io/badge/Docs-Website-brightgreen.svg)](https://vijay-janarthanan.github.io/OpenCanvas/)
 
 ---
 
 <div align="center">
-  <img src="assets/opencanvas_demo.gif" width="340" alt="OpenCanvas Live Demo in BitChord" style="border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);" />
-  <br />
-  <p><em><b>Live OpenCanvas in Action:</b> Dynamically streaming and vertically reframing YouTube music videos behind playback with zero servers.</em></p>
-  <p>
-    <a href="assets/opencanvas_android_showcase.mp4"><b>▶️ Watch Android Showcase Video (MP4)</b></a> &nbsp;•&nbsp; 
-    <a href="assets/opencanvas_desktop_showcase.mp4"><b>🖥️ Watch Desktop Showcase Video (MP4)</b></a> &nbsp;•&nbsp; 
-    <a href="https://vijay-janarthanan.github.io/OpenCanvas/"><b>🌐 Interactive Web Documentation</b></a>
-  </p>
+  <table>
+    <tr>
+      <td align="center" valign="top">
+        <img src="assets/opencanvas_demo.gif" width="250" alt="OpenCanvas on Android: restart, seek, seek" /><br />
+        <b>Android</b> (emulator, 360p)<br />
+        <sub>restart → video from 0:00 → seek to 1:40 → seek to 2:20<br /><a href="assets/opencanvas_android_showcase.mp4">▶ full 38 s video (MP4)</a></sub>
+      </td>
+      <td align="center" valign="top">
+        <img src="assets/opencanvas_desktop_demo.gif" width="470" alt="OpenCanvas in the BitChord desktop app" /><br />
+        <b>Windows desktop</b> (BitChord)<br />
+        <sub>the official video behind the player, lyrics on the right<br /><a href="assets/opencanvas_desktop_showcase.mp4">▶ full 20 s video (MP4)</a></sub>
+      </td>
+    </tr>
+  </table>
+  <p><sub>The recordings are real screen captures of the apps. A screen recorder cannot capture an app's audio, so the soundtrack is the music video's own audio, laid in at the position the picture shows; the measured drift between song and picture is in <a href="#-measured-not-claimed">Measured, not claimed</a>.</sub></p>
 </div>
 
 ---
 
-## 💼 Hire Me / Freelance Work
+## 🌟 What it does
 
-Are you building a music player, streaming platform, video pipeline, or media app? **I am available for freelance work, consulting, and full-time software engineering roles.**
+A streaming app knows the song it is playing. OpenCanvas finds that song's **official music video**, checks that it really is the same recording, works out how the song's timeline maps onto the video's, and then keeps the picture on the right second for as long as the song plays:
 
-- 🚀 **Specializations**:
-  - **Audio & Video Streaming**: ExoPlayer / Media3, Skiko, FFmpeg, Hardware Codecs, HLS/DASH, real-time transformations.
-  - **Mobile & Cross-Platform Systems**: Kotlin Multiplatform (KMP), Compose Multiplatform, Jetpack Compose, React Native, Flutter.
-  - **On-Device AI & Computer Vision**: Ultra-lightweight ML inference (ONNX, TFLite, CoreML, NNAPI), kinematics smoothing, face & subject tracking.
-  - **Performance Optimization**: Zero-copy rendering, GPU matrix transforms, battery-efficient background playback.
-
-<div align="center">
-  <a href="mailto:vijaybfriendly@gmail.com?subject=Project%20%2F%20Freelance%20Inquiry%20-%20OpenCanvas&body=Hi%20Vijay,%0A%0AI%20came%20across%20OpenCanvas%20and%20would%20like%20to%20discuss%20a%20project%20%2F%20freelance%20opportunity%20%2F%20role%20with%20you.%0A%0AProject%20Overview:%0A-%20Timeline:%0A-%20Budget%20%2F%20Rate:%0A%0ABest%20regards,">
-    <img src="https://img.shields.io/badge/💼%20Hire%20Me%20%2F%20Freelance%20Inquiry-vijaybfriendly%40gmail.com-blue?style=for-the-badge&logo=mail.ru" alt="Hire Me" />
-  </a>
-  &nbsp;&nbsp;
-  <a href="https://github.com/Vijay-Janarthanan">
-    <img src="https://img.shields.io/badge/GitHub-Vijay--Janarthanan-181717?style=for-the-badge&logo=github" alt="GitHub Profile" />
-  </a>
-</div>
-
-> 📬 **Direct Email**: [vijaybfriendly@gmail.com](mailto:vijaybfriendly@gmail.com?subject=OpenCanvas%20Inquiry)  
-> *Clicking the badge or email link opens your mail client with a pre-filled subject and template.*
+- **Starts at once.** The video's stream is known about half a second after the song starts (median 0.55 s on a cold cache) and the map is ready after about a second (median 0.95 s); a sharper 720p+ stream replaces the first one when it arrives.
+- **Locked to the song, not looping.** A music video is rarely the album track with pictures: it has an intro, and often edits (a bar repeated, a bar cut). OpenCanvas measures a **map** — one offset per stretch of the song — so the picture stays right through the edits, and is hidden where the video has no matching scene.
+- **Seeks and skips just work.** Seek in the song and the video jumps to the matching second; start the next track and its video begins immediately. Both are handled by a small, platform-independent policy ([`CanvasSyncPolicy`](packages/opencanvas-core/src/commonMain/kotlin/com/opencanvas/core/sync/CanvasSyncPolicy.kt)).
+- **Lightweight.** Everything is learned from the *headers* of two small MP4 files — about 0.3 MB each — and a few milliseconds of arithmetic. Nothing is decoded, nothing is downloaded in full to find the sync, and the same code runs on every platform.
+- **Self-contained.** One library, no daemon, no server of ours, no account or API key. It talks to YouTube's own servers the way YouTube's apps do, and nothing else.
+- **Not tied to one app.** [BitChord](https://github.com/kushagrasinghx/BitChord) is the first host, not a requirement. Any player that knows the song's title, artist and where its audio can be read can use it (see [Use it in your app](#-use-it-in-your-app)).
 
 ---
 
-## 🌟 What is OpenCanvas?
-
-Spotify's **Canvas** (the short looping video that plays behind the song on the "Now Playing" screen) drives a **145% boost in track shares** and **20% more playlist additions**. However, **less than 5% of all streaming songs have a Canvas**, because Spotify requires verified artists to manually shoot and upload vertical clips. Open-source players like **BitChord** fail on over 95% of tracks because Apple Music and Tidal have very limited motion artwork, and Spotify requires user session cookies.
-
-**OpenCanvas changes this universally:**
-1. **Any Song in the World**: Dynamically matches any audio track to its Official Music Video (OMV).
-2. **Dual Playback Modes**:
-   - **Mode A: Looping Canvas (Spotify-Style)**: Pinpoints the 8–12 second visual chorus climax using YouTube's **"Most Replayed"** heatmap.
-   - **Mode B: Full Synced Music Video**: Streams the entire music video live from start to finish, reframing on the fly into vertical 9:16 portrait and locked to audio playback!
-3. **Configurable Video Resolutions**:
-   - Supports preset rungs (`360p`, `480p`, `720p`, `1080p`) as well as **custom explicit height and width dimensions** programmatically (`OpenCanvasResolution.fromDimensions(height, width)`).
-4. **Smart Subject-Centric Reframing**: Ultra-lightweight on-device AI detector (**UltraFace-slim**, 1.1 MB ONNX) samples frames at a lightweight cadence and applies a **1-Euro Filter** with instant $0\text{ ms}$ scene-cut snapping to smoothly track the lead singer.
-5. **Zero-Reencode Hardware Viewport Crop**: Streams the video directly without re-encoding, using GPU hardware-accelerated matrix transforms (Compose `graphicsLayer`, Android `TextureView`, CSS transforms) for 60 FPS silky-smooth motion with zero battery drain.
-6. **Zero Hosting Costs**: Precomputed crop paths (< 1 KB JSON) are cached locally and shared through a free global GitHub + jsDelivr CDN (`opencanvas-db`).
-
----
-
-## 🗺️ Planned Architecture Flow
+## 🧭 How it works
 
 ```mermaid
-flowchart TD
-    A["Audio Track Requested<br><i>(Title + Artist)</i>"] --> B["1. Official Video Matcher<br><i>InnerTube API Filtering</i>"]
-    B -->|Verified OMV| C{"Playback Mode"}
-    
-    C -->|Loop Canvas| D["2. Heatmap Parser<br><i>YouTube Most Replayed Markers</i>"]
-    D -->|Chorus Hook Window| E["Pinpoint 8–12s Climax<br><i>Zero Audio DSP Overhead</i>"]
-    
-    C -->|Full Synced Video| F["Full Video Timeline<br><i>Audio Offset Synchronization</i>"]
-    
-    E --> G["3. Resolution & Stream Selector<br><i>360p / 480p / 720p / 1080p / Custom</i>"]
-    F --> G
-    
-    G --> H["4. Saliency & Crop Kinematics<br><i>UltraFace-slim ONNX Keyframes</i>"]
-    H --> I["5. 1-Euro Filter & Scene-Cut Snapper<br><i>Zero Jitter, Instant Cut Snapping</i>"]
-    I --> J["6. Hardware GPU Viewport Render<br><i>Android TextureView / Compose GraphicsLayer / Skiko</i>"]
-    
-    J --> K["Silky 60 FPS Vertical Canvas<br><i>Zero Transcoding, Minimal Battery</i>"]
+flowchart LR
+    A["Song starts<br><i>title · artist · audio id</i>"] --> B["Search + rank<br><i>channel, 'official video',<br>length, verified artist</i>"]
+    B --> C["Video stream<br><i>360p now (0.2 s)<br>720p+ a moment later</i>"]
+    B --> D["Verify against the song<br><i>read two MP4 headers (~0.3 MB each)</i>"]
+    D --> E["Frame-size envelopes<br><i>AAC frame sizes → loudness curve</i>"]
+    E --> F["Align<br><i>FFT cross-correlation +<br>Viterbi over 10 s windows</i>"]
+    F --> G["Song → video map<br><i>one offset per stretch</i>"]
+    G --> H["CanvasSyncPolicy<br><i>seek / nudge / hide</i>"]
+    C --> H
+    H --> I["Your video player"]
 ```
 
----
+**Why frame sizes?** An AAC audio track is a sequence of frames, and the *size* of each frame follows the loudness and busyness of the music. The table of frame sizes sits in the file's header (`moov`), so reading about 300 KB of each of the two files gives a loudness-like curve for the song and for the video — no audio is downloaded or decoded. The two curves are aligned with FFT cross-correlation in 10-second windows, and a Viterbi pass picks one offset per window, charging for every change of offset (a chorus a minute away is a different place, not an edit). Consecutive windows with one offset become a segment. The candidate that lines up best wins, which is also what separates the official video from a lyric video, a live take or a re-upload; a "video" that is a still picture (under 40 kbit/s of video) is rejected by its bitrate.
 
-## 🚦 Component Status Matrix
+**Why two tiers?** YouTube serves a 360p stream (itag 18) almost instantly, and a taller 720p/1080p stream through a second client a moment later. Both are asked for at once: the canvas starts on the first and is re-published with the sharper one (`SyncStage`: `PENDING` → `MEASURED`).
 
-| Component / Feature | Description | Status | Target Platforms |
-| :--- | :--- | :---: | :--- |
-| **YouTube Stream Resolver** | Resolves direct playable MP4 streams with PO-token & fallback | 🟢 **Live** | Android, JVM Desktop, Node |
-| **Dynamic Resolution Profiles** | 360p, 480p, 720p, 1080p, and custom `fromDimensions(h, w)` | 🟢 **Live** | Android, Desktop, All SDKs |
-| **Heatmap Chorus / Hook Analyzer** | Extracts 8–12s climax loop from YouTube "Most Replayed" data | 🟢 **Live** | Kotlin Multiplatform, Web |
-| **Full Synced Video Mode** | Reframes full music video in sync with audio track playback | 🟢 **Live** | Android, JVM Desktop |
-| **1-Euro Kinematic Filter** | Eliminates pan jitter while instantly snapping to scene cuts | 🟢 **Live** | Kotlin, TS, Dart |
-| **BitChord Integration** | Settings toggle, resolution picker, and player canvas provider | 🟢 **Live** | Android APK, Windows Desktop |
-| **Compose Viewport Renderer** | Zero-reencode GPU hardware layer clipping & zooming | 🟢 **Live** | Compose Multiplatform |
-| **Distributed Registry (`opencanvas-db`)** | Community shared trajectory cache (< 1 KB per song via CDN) | 🟡 **Testing** | Global GitHub / jsDelivr |
-| **React Native / Flutter Bindings** | Declarative wrappers for mobile cross-platform developers | 🟡 **Testing** | iOS, Android |
-| **On-Device Pose / NNAPI Tracker** | Real-time body pose tracking using mobile NPU acceleration | 🔵 **Roadmap** | Android 12+, iOS Metal |
-| **Offline Trajectory Pre-caching** | Pre-fetches canvas crop trajectories for saved offline playlists | 🔵 **Roadmap** | Android, Desktop |
-
-*Legend: 🟢 **Live in Production** &nbsp;|&nbsp; 🟡 **Active Testing / Beta** &nbsp;|&nbsp; 🔵 **Planned Roadmap***
+**Why ranged reads?** YouTube throttles an open-ended download of its adaptive streams to about 140 KiB/s (the 18 MiB 720p file takes ~132 s that way) but serves bounded ranges at line rate. [`ProgressiveRangeSource`](packages/opencanvas-core/src/jvmSharedMain/kotlin/com/opencanvas/core/stream/ProgressiveRangeSource.kt) starts with a small first range that grows, and answers a seek with a small range at the new position first, so playback never waits for a whole file.
 
 ---
 
-## 🛠️ How to Integrate OpenCanvas in Your Project
+## 📏 Measured, not claimed
 
-### 1. Add Repository & Dependency
+Everything below was measured on one Windows 11 machine on a home connection, with the final code, from an empty cache and without the community maps. Raw reports are generated by the manual tests in [`packages/opencanvas-core/src/jvmTest/.../manual`](packages/opencanvas-core/src/jvmTest/kotlin/com/opencanvas/core/manual).
 
-#### Gradle (Kotlin DSL / `build.gradle.kts`):
+### Cold start, 16 songs in 6 languages — 16 of 16 aligned
+
+| Stage | min | median | p90 | max |
+| :--- | ---: | ---: | ---: | ---: |
+| Music video found, first stream playable | 451 ms | **550 ms** | 643 ms | 688 ms |
+| Song-to-video map ready | 596 ms | **954 ms** | 1 139 ms | 1 688 ms |
+| Same song, map already cached | | **0–25 ms** | | |
+
+English (8), Hindi (2), Tamil (2), Telugu (1), Korean (2), Spanish (1); songs from 2000 to 2022; full table with every title, offset and confidence in the [docs](https://vijay-janarthanan.github.io/OpenCanvas/#benchmarks). Offsets are what the map found: *Blinding Lights* starts 22.1 s into its video, *Dynamite* 22.8 s, *STAY* 19.4 s, *Kala Chashma* 17.0 s; for many songs the video carries the same master and the offset is 0.
+
+### Getting the stream — the same 720p file (18 MiB, 263 s)
+
+| Way of getting it | First byte | First second of video | Whole file |
+| :--- | ---: | ---: | ---: |
+| `yt-dlp -g` (spawn the tool, get the URL) | after 2.3–2.5 s | — | — |
+| `yt-dlp` full download | — | — | 3.9–4.0 s |
+| Plain HTTP GET of the file | 87 ms | 0.5 s | **132 s** (throttled to ≈ 140 KiB/s) |
+| OpenCanvas `ProgressiveRangeSource` | **27 ms** | **27 ms** | 1.8 s |
+| Seek to a random position (nothing buffered there) | **≈ 106 ms** to the first bytes of the new position | | |
+
+The 360p muxed stream is not throttled: 10 MiB in 1.1 s, first bytes in 53 ms. Resolving a stream URL takes 60–400 ms (median 143 ms for 360p).
+
+### How close the picture stays to the song
+
+Measured on an Android emulator (4 GB RAM, software video decoding, 360p) by logging the app's own song clock and video clock, and by matching every captured frame against the source video:
+
+| What | Result |
+| :--- | :--- |
+| Video position vs. the map's target, settled playback (50 samples, ≈ 40 s, with a restart and two seeks) | **96 % within ±150 ms**, median +49 ms, p95 147 ms, max 236 ms |
+| Picture vs. song through the map (frame matching) | after settling: within ≈ 0.1–0.4 s, picture slightly ahead |
+| First picture after a seek | ≈ 0.5 s after the tap, then smooth |
+| Same measurement during a cold start while the emulator is busy loading | up to ≈ 1 s behind for the first ≈ 8 s, then within ±0.2 s |
+
+These are emulator numbers: they are the evidence that the policy works and what an under-powered device does, **not** a measurement of a phone. We have not yet measured on physical devices.
+
+### Honest comparison
+
+We did not benchmark other libraries; this compares *approaches* and says what each costs.
+
+| Approach | Covers any song | Locked to the song / survives seeks | Needs | Cost before the video can start |
+| :--- | :---: | :---: | :--- | :--- |
+| **Label-published loops** (Spotify Canvas, Apple motion artwork) | no — only what labels uploaded | no (a 3–8 s loop) | an account/token for some | a lookup |
+| **Embed the YouTube player** | yes | no — it plays its own audio | its UI, ads and controls | the player's own load |
+| **`yt-dlp` + play the file** | yes | no — you must work out the offset and handle seeks yourself | a Python tool on the device | 2.3–2.5 s to the URL, ≈ 4 s to download |
+| **Decode both audio tracks and correlate them** | yes | yes | downloading and decoding two full audio streams | seconds of download and CPU (not measured here) |
+| **OpenCanvas** | yes (16/16 in our matrix) | **yes** — segment map, seek-aware | nothing outside the library | **0.55 s** to a playable stream, **≈ 1 s** to the map, **0–25 ms** when cached |
+
+---
+
+## 🚀 Use it in your app
+
+### 1. Dependency
+
 ```kotlin
 repositories {
     mavenCentral()
     maven { url = uri("https://jitpack.io") }
 }
-
 dependencies {
-    // Core Engine (Resolution, Stream Resolver, Heatmap, Kinematics)
     implementation("com.github.Vijay-Janarthanan:OpenCanvas:1.0.0")
-    
-    // Optional: Compose Multiplatform UI components
+    // optional Compose player
     implementation("com.github.Vijay-Janarthanan.OpenCanvas:opencanvas-compose:1.0.0")
 }
 ```
 
----
-
-### 2. Resolving a Canvas Track
+### 2. Configure once, at app start
 
 ```kotlin
-import com.opencanvas.core.OpenCanvas
-import com.opencanvas.core.models.OpenCanvasMode
-import com.opencanvas.core.models.OpenCanvasResolution
-
-// 1. Resolve an 8-12 second chorus loop (Spotify-Style):
-val loopTrack = OpenCanvas.resolve(
-    title = "Blinding Lights",
-    artist = "The Weeknd",
-    mode = OpenCanvasMode.LOOP_CANVAS,
-    resolution = OpenCanvasResolution.STANDARD_480P
+OpenCanvas.configure(
+    OpenCanvasConfig(
+        cacheDirectory = File(context.filesDir, "opencanvas"), // measured maps live here; null = memory only
+        log = { Log.d("OpenCanvas", it) },                     // one line per stage, with timings
+    ),
 )
+```
 
-// 2. Resolve full music video synced with audio:
-val fullTrack = OpenCanvas.resolve(
-    title = "Starboy",
-    artist = "The Weeknd",
+Every other setting has a working default (see [Configuration](#-configuration)).
+
+### 3. Ask for the canvas when a track starts
+
+```kotlin
+// Optional but recommended: start the work the moment the song starts, before any screen asks.
+OpenCanvas.prefetch(
+    title = "Blinding Lights", artist = "The Weeknd", durationSec = 200,
     mode = OpenCanvasMode.FULL_SYNCED_VIDEO,
-    resolution = OpenCanvasResolution.HD_720P
+    resolution = OpenCanvasResolution.HD_720P,
+    trackVideoId = "fHI8X4OXluQ",              // the YouTube (Music) id of the audio you are playing
 )
-```
 
----
-
-### 3. Setting Custom Resolutions & Dimensions
-
-OpenCanvas allows you to tune bandwidth and performance per device:
-
-```kotlin
-// A. Standard Presets:
-OpenCanvasResolution.LOW_360P       // 360p  (640x360)  — Minimal data, ultra-fast buffer
-OpenCanvasResolution.STANDARD_480P  // 480p  (854x480)  — Mobile standard (Recommended)
-OpenCanvasResolution.HD_720P        // 720p  (1280x720) — Crisp HD for large tablets/desktop
-OpenCanvasResolution.FULL_HD_1080P  // 1080p (1920x1080)— Maximum visual fidelity
-
-// B. Custom Dimensions via Code:
-val customRes = OpenCanvasResolution.fromDimensions(height = 720, width = 1280)
-
-// C. String Label Parsing:
-val parsedRes = OpenCanvasResolution.fromLabel("720p") // parses "360", "480p", "720", "1080p"
-```
-
----
-
-### 4. Android Integration (Jetpack Compose + Media3 / ExoPlayer)
-
-In your Android audio player:
-
-```kotlin
-@Composable
-fun NowPlayingCanvas(
-    title: String,
-    artist: String,
-    isPlaying: Boolean,
-    currentPositionMs: Long
-) {
-    var canvasTrack by remember { mutableStateOf<OpenCanvasTrack?>(null) }
-
-    LaunchedEffect(title, artist) {
-        canvasTrack = OpenCanvas.resolve(
-            title = title,
-            artist = artist,
-            mode = OpenCanvasMode.LOOP_CANVAS,
-            resolution = OpenCanvasResolution.STANDARD_480P
-        )
-    }
-
-    canvasTrack?.let { track ->
-        // Direct stream URL ready for ExoPlayer or TextureView
-        AndroidView(
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    // Zero-reencode vertical crop: zoom and center lead subject
-                    scaleX = 1.77f // 16:9 -> 9:16 vertical zoom
-                    scaleY = 1.77f
-                },
-            factory = { context ->
-                PlayerView(context).apply {
-                    useController = false
-                    player = ExoPlayer.Builder(context).build().apply {
-                        setMediaItem(MediaItem.fromUri(track.playableStreamUrl))
-                        repeatMode = Player.REPEAT_MODE_ONE
-                        volume = 0f // Muted video layer underneath music
-                        prepare()
-                        playWhenReady = isPlaying
-                    }
-                }
-            }
-        )
+// Later, from the screen that shows the video:
+OpenCanvas.resolveFlow(
+    title = "Blinding Lights", artist = "The Weeknd", durationSec = 200,
+    mode = OpenCanvasMode.FULL_SYNCED_VIDEO,
+    resolution = OpenCanvasResolution.HD_720P,
+    trackVideoId = "fHI8X4OXluQ",
+).collect { track ->
+    when (track.syncStage) {
+        SyncStage.PENDING  -> player.prepare(track.videoStreamUrl, track.videoHeaders) // buffer, don't show yet
+        SyncStage.MEASURED -> { policy = CanvasSyncPolicy(track.syncMap(), track.videoDurationMs); showVideo() }
+        SyncStage.NONE     -> showStillArtwork()   // no video lines up with this song
     }
 }
 ```
 
----
+The flow emits the track as soon as its stream is known (`PENDING`), again when the map is ready (`MEASURED`), and again if a taller stream turns up. Collectors of the same request share one measurement; abandon the flow and the work is dropped after a short grace. `resolve(...)` is the one-shot version that returns once the track is usable.
 
-### 5. Desktop JVM Integration (Compose Multiplatform)
-
-In your Desktop player application:
+### 4. Keep the video on the song
 
 ```kotlin
-@Composable
-fun DesktopCanvasLayer(
-    title: String,
-    artist: String,
-    resolution: String = "720p"
-) {
-    val res = OpenCanvasResolution.fromLabel(resolution)
-    val canvasTrack = produceState<OpenCanvasTrack?>(initialValue = null, title, artist) {
-        value = OpenCanvas.resolve(
-            title = title,
-            artist = artist,
-            resolution = res
-        )
-    }.value
-
-    canvasTrack?.let { track ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .clipToBounds()
-        ) {
-            // Mount your native JavaFX WebView, VLCJ, or Skiko video surface
-            DesktopVideoSurface(
-                streamUrl = track.playableStreamUrl,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-    }
+// every 250 ms, and immediately after policy.seekDetected(...) or a track change
+when (val action = policy.decide(songMs, videoPlayer.positionMs, songPlaying, videoPlayer.isReady)) {
+    Hidden        -> showStillArtwork()          // this stretch of the song has no matching picture
+    Hold          -> Unit
+    Ended         -> showStillArtwork()          // the song outlasts the video: never loop
+    is SeekTo     -> videoPlayer.seekTo(action.videoMs)
+    is Nudge      -> videoPlayer.setSpeed(action.speed)   // ≤ ±5 %, imperceptible
 }
 ```
 
----
+The policy is pure Kotlin with no player in it: it works with ExoPlayer, VLC, Skiko, anything that can report a position and seek. On a track change, build a new policy from the new track.
 
-### 6. React Native / Web Usage (`@opencanvas/core`)
+### 5. Songs that are not on YouTube
 
-```tsx
-import React, { useEffect, useState } from 'react';
-import { OpenCanvas, OpenCanvasMode } from '@opencanvas/core';
+Pass where the song's audio can be read once (an `http(s)` URL that honours range requests, or a file):
 
-export const MusicPlayerScreen = ({ title, artist }) => {
-  const [track, setTrack] = useState(null);
-
-  useEffect(() => {
-    OpenCanvas.resolve({
-      title,
-      artist,
-      mode: OpenCanvasMode.LOOP_CANVAS,
-      resolution: "480p"
-    }).then(setTrack);
-  }, [title, artist]);
-
-  if (!track) return null;
-
-  return (
-    <video
-      src={track.playableStreamUrl}
-      autoPlay
-      loop
-      muted
-      playsInline
-      style={{
-        width: '100vw',
-        height: '100vh',
-        objectFit: 'cover'
-      }}
-    />
-  );
-};
+```kotlin
+OpenCanvas.resolveFlow(title, artist, songAudio = SongAudio.Stream(File("/music/song.m4a")), mode = FULL_SYNCED_VIDEO)
 ```
 
----
+### 6. Compose
 
-## ⚡ Performance Benchmarks
+`OpenCanvasPlayer` (module `opencanvas-compose`) takes the track and the song's position and hands your video surface the position that belongs to it through the map; it hides the picture where the map has none.
 
-| Metric | Server Re-Encoding (YOLOv8 + FFmpeg) | OpenCanvas (Client-Side Transform) | Improvement |
-| :--- | :--- | :--- | :--- |
-| **Startup Delay** | 18–35 seconds | **< 250 milliseconds** | **100x Faster** |
-| **Network Bandwidth** | 45 MB – 80 MB download | **Direct stream (360p: 5.9MB / 480p: 9.7MB)** | **60–80% Savings** |
-| **Battery Drain** | High (video transcoding CPU spike) | **Negligible (hardware H.264/HEVC decoder)** | **90% Less Battery** |
-| **Server Cost** | $0.002 per track lookup | **$0.00 (Zero backend servers)** | **100% Free** |
-| **Metadata Footprint** | 3 MB video file per song | **< 1 KB metadata per song** | **3,000x Smaller** |
+### Desktop JVM: optional yt-dlp
+
+`YtDlpBackend` (desktop only, `jvmMain`) is an *optional* stream backend for machines that have `yt-dlp` installed; it warms itself up in the background. Nothing needs it — the default backends work on their own on every platform.
 
 ---
 
-## 🌐 Free Documentation Hosting (GitHub Pages)
+## ⚙️ Configuration
 
-The full interactive documentation with search, code playground, and live architecture demos is hosted completely free on **GitHub Pages**:
+| `OpenCanvasConfig` | Default | What it is |
+| :--- | :--- | :--- |
+| `streamBackend` | `InnerTubeBackend.visionOs()` | resolves the sharp stream (720p+, plain URLs, no signature) |
+| `instantBackend` | `InnerTubeBackend.android()` | resolves 360p at once and supplies the small MP4 the sync reads; `null` disables the two-step start |
+| `cacheDirectory` | `~/.opencanvas/sync` (JVM), `null` (Android) | measured maps persist here; the next play of the song needs no measuring |
+| `communityMapsUrl` | jsDelivr path of this repo | precomputed maps, one JSON per song; `null` disables |
+| `httpClient` | tuned OkHttp | used for search, maps and audio ranges |
+| `log` | silent | one line per stage |
 
-👉 **[https://vijay-janarthanan.github.io/OpenCanvas/](https://vijay-janarthanan.github.io/OpenCanvas/)**
-
-Source files are located in the [`docs/`](docs/) directory and automatically deployed on every push via `.github/workflows/pages.yml`.
+Bring your own resolver by implementing [`StreamBackend`](packages/opencanvas-core/src/jvmSharedMain/kotlin/com/opencanvas/core/stream/StreamBackend.kt) (two small methods).
 
 ---
 
-## 📄 License & Attribution
+## 🧩 Platform & component status
 
-OpenCanvas is distributed under the **Apache License 2.0**.
+| Component | Status | Where |
+| :--- | :---: | :--- |
+| On-device sync (frame-size envelope, FFT + Viterbi, segment map) | 🟢 | Android, desktop JVM (shared code) |
+| Two-tier stream resolution (360p instant, 720p+ sharp) | 🟢 | Android, desktop JVM |
+| Candidate search, ranking and audio verification | 🟢 | Android, desktop JVM |
+| Ranged progressive playback source | 🟢 | desktop JVM (`ProgressiveRangeSource`); Android hosts use a chunked ExoPlayer data source |
+| Position-locked playback policy (`CanvasSyncPolicy`) | 🟢 | common Kotlin |
+| Map cache + prefetch + shared sessions | 🟢 | Android, desktop JVM |
+| BitChord integration | 🟢 | Android APK, Windows desktop |
+| Compose player (`opencanvas-compose`) | 🟡 follows the map; compile-checked on JVM, not yet run in a sample app | Compose Multiplatform |
+| Looping canvas mode (YouTube "Most Replayed" window) | 🟡 unchanged from 1.0, not covered by the new benchmarks | JVM / Android |
+| Subject-centred reframing (ONNX face tracker, 1-Euro filter) | 🟡 experimental, unchanged from 1.0, separate from the synced-video path | JVM |
+| Community maps (`opencanvas-db`) | 🟡 wired in; no maps published yet | CDN |
+| `@opencanvas/core` (TypeScript) and `open_canvas` (Dart) | 🟡 crop-kinematics/filter ports and a view only — **the resolver and sync engine are Kotlin** | React Native / Web / Flutter |
+| iOS | 🔵 not started (the engine needs a Kotlin/Native port of the HTTP and storage parts) | |
+| [`tools/opencanvas-stream-server`](tools/opencanvas-stream-server) | optional reference tool; **no app needs it** | Python |
 
-**Author & Architect**:  
-**Vijay Janarthanan** (<vijaybfriendly@gmail.com>)
+---
 
-All forks, distributions, and commercial implementations must retain the attribution notice:  
+## ⚠️ Limits you should know
+
+- **It rides on YouTube's undocumented player endpoints** (the same ones its own apps use). They can change; the backends are pluggable for that reason, but today's defaults may need an update one day. Check YouTube's Terms of Service for your use case — OpenCanvas streams from YouTube's servers and stores nothing of YouTube's besides the numbers of the map.
+- **A different mix, a live cut or a cover has no map**, so it gets no canvas (the still cover stays) rather than a wrong one. A heavily edited video is aligned piecewise and the unmatched stretches are hidden.
+- **Label canvases keep first refusal in BitChord** (Apple/Tidal/Spotify/community loops): OpenCanvas is the fallback, so a song with an Apple loop shows the loop. If the label sources are still working after 1.2 s the music video goes up meanwhile, and a label clip replaces it if one turns up.
+- **We have measured on an emulator and a desktop, not on phones.** 720p decode cost and battery have not been measured.
+- Maps are measured from the song's audio *as the player plays it*; if your player plays a different master than the YouTube Music id you pass, pass the right id (or `songAudio`).
+
+---
+
+## 🤝 Collaborate / ask a question
+
+OpenCanvas is a one-person project and I would like to hear how you would use it.
+
+- **Question or idea?** Open a [question or feature issue](https://github.com/Vijay-Janarthanan/OpenCanvas/issues/new/choose) — answers there help the next person.
+- **Want to build on it, port it (iOS, web), or integrate it in your player?** Write to [vijaybfriendly@gmail.com](mailto:vijaybfriendly@gmail.com?subject=OpenCanvas%20collaboration) — I am happy to pair on an integration.
+- **Found a song that does not work?** Open a bug with the title and artist; the log line from `OpenCanvasConfig.log` says why it was rejected.
+- **Contributing code:** see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### 💼 Hire me
+
+I am **Vijay Janarthanan, a Software Developer** (Kotlin, Android, Compose Multiplatform), available for freelance work and full-time roles.
+
+<div align="center">
+  <a href="mailto:vijaybfriendly@gmail.com?subject=Project%20%2F%20Freelance%20Inquiry%20-%20OpenCanvas"><img src="https://img.shields.io/badge/Hire%20Me%20%2F%20Freelance-vijaybfriendly%40gmail.com-blue?style=for-the-badge" alt="Hire me" /></a>
+  &nbsp;
+  <a href="https://github.com/Vijay-Janarthanan"><img src="https://img.shields.io/badge/GitHub-Vijay--Janarthanan-181717?style=for-the-badge&logo=github" alt="GitHub" /></a>
+</div>
+
+---
+
+## 📄 License & attribution
+
+Apache License 2.0. Forks, distributions and commercial implementations keep the attribution notice:
+
 ```
 Powered by OpenCanvas (Created by Vijay Janarthanan <vijaybfriendly@gmail.com>)
 ```
