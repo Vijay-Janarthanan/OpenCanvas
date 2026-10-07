@@ -1,0 +1,19 @@
+name: open_canvas
+description: Zero-backend, AI-reframed dynamic vertical video Canvas for any song in Flutter.
+version: 1.0.0
+homepage: https://github.com/opencanvas/open_canvas
+repository: https://github.com/opencanvas/open_canvas
+author: Vijay
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0

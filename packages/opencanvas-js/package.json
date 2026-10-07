@@ -1,0 +1,38 @@
+{
+  "name": "@opencanvas/core",
+  "version": "1.0.0",
+  "description": "Zero-backend, AI-reframed dynamic vertical video Canvas for any song — runs on React Native, Web, and Node.",
+  "author": "Vijay",
+  "license": "Apache-2.0",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test"
+  },
+  "keywords": [
+    "spotify",
+    "canvas",
+    "video",
+    "music",
+    "smart-crop",
+    "reframing",
+    "react-native",
+    "bitchord",
+    "youtube"
+  ],
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "videoId": "4NRXx6U8ABQ",
+  "title": "Blinding Lights",
+  "artist": "The Weeknd",
+  "loopStartMs": 40000,
+  "loopEndMs": 50000,
+  "keyframes": [
+    { "t": 40.0, "cx": 0.50, "isSceneCut": false },
+    { "t": 41.0, "cx": 0.52, "isSceneCut": false },
+    { "t": 42.0, "cx": 0.49, "isSceneCut": false },
+    { "t": 43.0, "cx": 0.78, "isSceneCut": true },
+    { "t": 44.0, "cx": 0.77, "isSceneCut": false },
+    { "t": 45.0, "cx": 0.50, "isSceneCut": true },
+    { "t": 46.0, "cx": 0.51, "isSceneCut": false },
+    { "t": 47.0, "cx": 0.53, "isSceneCut": false },
+    { "t": 48.0, "cx": 0.50, "isSceneCut": false },
+    { "t": 49.0, "cx": 0.48, "isSceneCut": false },
+    { "t": 50.0, "cx": 0.50, "isSceneCut": false }
+  ]
+}

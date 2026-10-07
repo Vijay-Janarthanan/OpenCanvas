@@ -1,0 +1,30 @@
+# Build and cache directories
+.gradle/
+.kotlin/
+build/
+**/build/
+bin/
+out/
+target/
+
+# Node / JS
+node_modules/
+**/node_modules/
+dist/
+
+# Flutter / Dart
+.dart_tool/
+**/.dart_tool/
+.packages
+
+# Local environment and private properties
+local.properties
+*.log
+replay_*.log
+
+# Cloned external repo (maintained separately)
+bitchord-repo/
+
+# OS metadata
+.DS_Store
+Thumbs.db

@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OpenCanvasTrackCrop",
+  "type": "object",
+  "required": ["videoId", "keyframes"],
+  "properties": {
+    "videoId": {
+      "type": "string",
+      "description": "YouTube 11-character video ID"
+    },
+    "title": {
+      "type": "string"
+    },
+    "artist": {
+      "type": "string"
+    },
+    "loopStartMs": {
+      "type": "integer"
+    },
+    "loopEndMs": {
+      "type": "integer"
+    },
+    "keyframes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["t", "cx"],
+        "properties": {
+          "t": {
+            "type": "number",
+            "description": "Timestamp in seconds"
+          },
+          "cx": {
+            "type": "number",
+            "description": "Normalized focal center X [0.0 - 1.0]"
+          },
+          "cy": {
+            "type": "number",
+            "default": 0.5
+          },
+          "isSceneCut": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
+    }
+  }
+}
