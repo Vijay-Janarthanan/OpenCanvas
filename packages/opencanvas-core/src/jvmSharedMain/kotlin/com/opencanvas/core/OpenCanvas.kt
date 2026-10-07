@@ -55,11 +55,15 @@ object OpenCanvas {
             0L to (if (candidate.durationSec > 0) candidate.durationSec * 1000L else 240000L)
         }
 
-        // 3. Construct resolved OpenCanvas track
+        // 3. Resolve direct playable MP4 stream URL via yt-dlp
+        val playableStreamUrl = YouTubeStreamResolver.resolveVideoStreamUrl(videoId)
+            ?: return@withContext null
+
+        // 4. Construct resolved OpenCanvas track
         val track = OpenCanvasTrack(
             videoId = videoId,
-            videoStreamUrl = "https://www.youtube.com/watch?v=$videoId",
-            title = title,
+            videoStreamUrl = playableStreamUrl,
+            title = candidate.title.ifBlank { title },
             artist = artist,
             mode = mode,
             loopStartMs = startMs,

@@ -113,8 +113,7 @@ object YouTubeStreamResolver {
         val matcher = pattern.matcher(html)
         if (!matcher.find()) return emptyList()
 
-        val jsonStr = matcher.group(1)
-        val doc = Jsoup.parse(html)
+        val jsonStr = matcher.group(1) ?: return emptyList()
 
         // Simple regex fallback to extract video IDs and titles
         val videoPattern = Pattern.compile("\"videoId\":\"([a-zA-Z0-9_-]{11})\"")
@@ -125,9 +124,9 @@ object YouTubeStreamResolver {
 
         val seen = HashSet<String>()
         while (vMatcher.find() && candidates.size < 6) {
-            val vid = vMatcher.group(1)
+            val vid = vMatcher.group(1) ?: continue
             if (seen.add(vid)) {
-                val title = if (tMatcher.find()) tMatcher.group(1) else "Video"
+                val title = if (tMatcher.find()) tMatcher.group(1).orEmpty() else "Video"
                 candidates.add(
                     VideoCandidate(
                         videoId = vid,
@@ -140,5 +139,46 @@ object YouTubeStreamResolver {
             }
         }
         return candidates
+    }
+
+    /**
+     * Resolves a direct playable MP4 video stream URL using yt-dlp.
+     */
+    fun resolveVideoStreamUrl(videoId: String): String? {
+        val endpoints = listOf(
+            "http://127.0.0.1:18999/resolve?v=$videoId",
+            "http://10.0.2.2:18999/resolve?v=$videoId",
+        )
+        for (ep in endpoints) {
+            val streamUrl = runCatching {
+                val req = Request.Builder().url(ep).build()
+                client.newCall(req).execute().use { resp ->
+                    if (resp.isSuccessful) {
+                        val body = resp.body?.string().orEmpty()
+                        val match = Pattern.compile("\"streamUrl\"\\s*:\\s*\"(http[^\"]+)\"").matcher(body)
+                        if (match.find()) match.group(1)?.replace("\\/", "/") else null
+                    } else null
+                }
+            }.getOrNull()
+            if (!streamUrl.isNullOrBlank()) return streamUrl
+        }
+
+        // Direct CLI fallback on Desktop
+        val cliStreamUrl = runCatching {
+            val pb = ProcessBuilder(
+                "python", "-m", "yt_dlp", "-g",
+                "-f", "bestvideo[height<=720][ext=mp4]/bestvideo/best",
+                "https://www.youtube.com/watch?v=$videoId"
+            )
+            pb.redirectErrorStream(true)
+            val process = pb.start()
+            val output = process.inputStream.bufferedReader().use { it.readText().trim() }
+            process.waitFor()
+            output.lines().firstOrNull { it.startsWith("http") }
+        }.getOrNull()
+
+        if (!cliStreamUrl.isNullOrBlank()) return cliStreamUrl
+
+        return null
     }
 }
