@@ -36,6 +36,9 @@ object VideoMatcher {
         "official video", "official music video", "music video", "official mv", "official m/v", "video song",
     )
 
+    /** Whether the title itself says it is the music video ("video song", "official video", "MV"). */
+    fun saysVideo(title: String): Boolean = title.lowercase().let { t -> POSITIVE_KEYWORDS.any { t.contains(it) } }
+
     /**
      * Scores how likely a candidate video is the true visual music video for a given track.
      * Higher score = better match.

@@ -138,32 +138,46 @@ object SyncAligner {
     ): AlignResult {
         val plain = alignAtRate(track, video, sampleRate, params)
         if (plain.error == null && plain.confidence >= RATE_SEARCH_BELOW) return plain
-        // Film videos are often 25/24 faster or slower than the album track (the same frames shown at
-        // another frame rate): try those speeds, and keep one only when it clearly beats the plain fit.
+        // A film video often plays the song faster or slower than the album track (a PAL transfer is
+        // 25/24 off, other masters differ by more): look for a speed at which the two do line up, coarse
+        // grid first and then around the best, and keep it only when it clearly beats the plain fit.
         var best = plain
-        for (rate in FILM_RATES) {
-            val n = (video.size / rate).toInt()
-            if (n < 2) continue
-            val stretched = FloatArray(n) {
-                val x = it * rate
-                val i = x.toInt().coerceAtMost(video.size - 2)
-                val f = (x - i).toFloat()
-                video[i] * (1 - f) + video[i + 1] * f
+        var bestRate = 1.0
+        fun tryRate(rate: Double) {
+            val fit = alignAtRate(track, stretch(video, rate), sampleRate, params)
+            if (fit.error != null || fit.confidence < MIN_RATE_CONFIDENCE) return
+            if (fit.confidence > best.confidence + (if (bestRate == 1.0) RATE_MARGIN else 0.0)) {
+                best = fit.atRate(rate)
+                bestRate = rate
             }
-            val fit = alignAtRate(track, stretched, sampleRate, params)
-            if (fit.error != null || fit.confidence < MIN_RATE_CONFIDENCE) continue
-            val rescaled = fit.atRate(rate)
-            if (rescaled.confidence > best.confidence + RATE_MARGIN) best = rescaled
         }
+        var rate = RATE_FROM
+        while (rate <= RATE_TO + 1e-9) {
+            if (abs(rate - 1.0) > 0.004) tryRate(rate)
+            rate += RATE_STEP
+        }
+        if (bestRate != 1.0) for (delta in doubleArrayOf(-0.005, -0.0025, 0.0025, 0.005)) tryRate(bestRate + delta)
         return best
+    }
+
+    private fun stretch(video: FloatArray, rate: Double): FloatArray {
+        val n = (video.size / rate).toInt().coerceAtLeast(2)
+        return FloatArray(n) {
+            val x = it * rate
+            val i = x.toInt().coerceAtMost(video.size - 2)
+            val f = (x - i).toFloat()
+            video[i] * (1 - f) + video[i + 1] * f
+        }
     }
 
     private const val RATE_SEARCH_BELOW = 0.75
     private const val MIN_RATE_CONFIDENCE = 0.5
     private const val RATE_MARGIN = 0.1
-    private val FILM_RATES = doubleArrayOf(24.0 / 25.0, 25.0 / 24.0)
+    private const val RATE_FROM = 0.90
+    private const val RATE_TO = 1.10
+    private const val RATE_STEP = 0.01
 
-    private fun alignAtRate(
+    internal fun alignAtRate(
         track: FloatArray,
         video: FloatArray,
         sampleRate: Int,

@@ -1,6 +1,7 @@
 package com.opencanvas.core
 
 import com.opencanvas.core.matcher.VideoCandidate
+import com.opencanvas.core.matcher.VideoMatcher
 import com.opencanvas.core.models.OpenCanvasMode
 import com.opencanvas.core.models.OpenCanvasResolution
 import com.opencanvas.core.models.OpenCanvasTrack
@@ -309,7 +310,7 @@ internal class CanvasSession(
                 // The ranking is the main evidence, the match quality settles close calls: a version of the
                 // video that is the same recording as the song lines up cleanly, a different cut needs an
                 // edit-heavy map; a lower rank costs a little.
-                val score = result.confidence - RANK_PENALTY * rank
+                val score = result.confidence - RANK_PENALTY * rank + if (VideoMatcher.saysVideo(candidate.title)) SAYS_VIDEO_BONUS else 0.0
                 if (winner == null) graceEndsAt = System.currentTimeMillis() + OTHER_CANDIDATES_GRACE_MS
                 if (score > winnerScore) {
                     winner = candidate to result
@@ -425,6 +426,8 @@ internal class CanvasSession(
         const val ABANDON_GRACE_MS = 4_000L
         const val WARM_HOLD_MS = 30_000L
         const val RANK_PENALTY = 0.03
+        /** Between two videos that line up, one that calls itself the video song beats a poster that does not. */
+        const val SAYS_VIDEO_BONUS = 0.15
         const val OTHER_CANDIDATES_GRACE_MS = 600L
         const val BATCH_SIZE = 3
         const val BATCH_TIMEOUT_MS = 12_000L
