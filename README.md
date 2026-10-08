@@ -1,7 +1,7 @@
 # 🎬 OpenCanvas
 
 > **The official music video of any song, playing full-screen behind your player and locked to the song — it jumps when the user seeks, starts with the next track, and never loops. Runs inside your app on Android and desktop JVM: no server, no helper process, no API key.**
-> *Written by **Vijay Janarthanan**, Software Developer • Apache 2.0*
+> *Written by **Vijay Janarthanan**, Full Stack Developer • Apache 2.0*
 
 [![Kotlin Multiplatform](https://img.shields.io/badge/Kotlin-Multiplatform-purple.svg)](https://kotlinlang.org/)
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com/)
@@ -287,7 +287,7 @@ OpenCanvas is a one-person project and I would like to hear how you would use it
 
 ### 💼 Hire me
 
-I am **Vijay Janarthanan, a Software Developer** (Kotlin, Android, Compose Multiplatform), available for freelance work and full-time roles.
+I am **Vijay Janarthanan, a Full Stack Developer**, available for freelance work and full-time roles.
 
 <div align="center">
   <a href="mailto:vijaybfriendly@gmail.com?subject=Project%20%2F%20Freelance%20Inquiry%20-%20OpenCanvas"><img src="https://img.shields.io/badge/Hire%20Me%20%2F%20Freelance-vijaybfriendly%40gmail.com-blue?style=for-the-badge" alt="Hire me" /></a>
