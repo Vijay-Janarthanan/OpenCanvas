@@ -40,6 +40,111 @@
     .flow-step { background: rgba(17,24,39,0.8); border: 1px solid rgba(139,92,246,0.25); }
     .code-copy-btn { position: absolute; top: 8px; right: 8px; padding: 4px 8px; font-size: 12px; opacity: 0; transition: opacity .2s; }
     .code-container:hover .code-copy-btn { opacity: 1; }
+    /* live lab: a 16:9 player cropped to a 9:16 canvas, and the map drawn as ribbons */
+    .lab { display: grid; gap: 2rem; grid-template-columns: minmax(0, 1fr); align-items: start; }
+    @media (min-width: 1024px) { .lab { grid-template-columns: 19.5rem minmax(0, 1fr); gap: 2.5rem; } }
+    .lab-left { display: flex; flex-direction: column; gap: 0.9rem; align-items: stretch; width: min(100%, 19.5rem); margin: 0 auto; }
+    .lab-phone { border-radius: 2rem; padding: 0.5rem; background: #05070d; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 25px 60px -20px rgba(124,58,237,0.45); }
+    .lab-stage { position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 1.5rem; overflow: hidden; background: #000; }
+    .lab-stage::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4rem; z-index: 15; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); pointer-events: none; }
+    .lab-stage > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    /* 35 % larger than the stage: YouTube's own title bar and menus fall outside it, and a letterboxed video loses its bars */
+    .lab-yt-canvas, .lab-yt-canvas iframe { position: absolute; top: -17.5%; left: 50%; height: 135%; width: 426.7%; transform: translateX(-50%); border: 0; pointer-events: none; }
+    .lab-yt-canvas[hidden], .lab-stage > video[hidden], .lab-yt-song-box[hidden] { display: none; }
+    .lab-cover { position: absolute; inset: 0; z-index: 10; background: #0b0f19; transition: opacity .35s ease; pointer-events: none; }
+    .lab-cover[data-visible="false"] { opacity: 0; }
+    .lab-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .lab-cover img:not([src]) { display: none; }
+    .lab-cover-text { position: absolute; left: 0.9rem; right: 0.9rem; top: 3.4rem; font-size: 0.75rem; line-height: 1.35; color: #e5e7eb; text-shadow: 0 1px 4px #000; }
+    .lab-caption { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; padding: 4rem 1rem 1rem; background: linear-gradient(to top, rgba(0,0,0,0.92) 25%, transparent); pointer-events: none; }
+    .lab-caption-title { font-size: 1.125rem; font-weight: 800; line-height: 1.2; color: #fff; }
+    .lab-caption-artist { font-size: 0.875rem; color: #e5e7eb; }
+    .lab-badge { position: absolute; left: 0.75rem; top: 0.75rem; z-index: 20; max-width: calc(100% - 1.5rem); border: 1px solid; border-radius: 9999px; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 500; backdrop-filter: blur(6px); }
+    .lab-badge--idle { background: rgba(31,41,55,.9); color: #d1d5db; border-color: #4b5563; }
+    .lab-badge--ok { background: rgba(6,78,59,.85); color: #6ee7b7; border-color: rgba(16,185,129,.5); }
+    .lab-badge--sync { background: rgba(76,29,149,.85); color: #ddd6fe; border-color: rgba(139,92,246,.5); }
+    .lab-badge--warn { background: rgba(120,53,15,.85); color: #fde68a; border-color: rgba(245,158,11,.5); }
+    .lab-load { position: absolute; inset: 0; z-index: 30; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; padding: 1rem; text-align: center; color: #fff; background: rgba(5,7,13,0.72); cursor: pointer; border: 0; }
+    .lab-load[hidden] { display: none; }
+    .lab-load:hover { background: rgba(76,29,149,0.55); }
+    .lab-load:disabled { cursor: progress; }
+    .lab-load-icon { font-size: 2.25rem; }
+    .lab-load-label { font-weight: 600; }
+    .lab-load-note { font-size: 0.75rem; color: #d1d5db; max-width: 16rem; }
+    .lab-controls { display: flex; align-items: center; gap: 0.75rem; }
+    .lab-play { width: 2.75rem; height: 2.75rem; flex: none; border-radius: 9999px; border: 0; background: #fff; color: #0b0f19; font-weight: 700; cursor: pointer; }
+    .lab-play:hover:not(:disabled) { background: #ddd6fe; }
+    .lab-play:disabled { opacity: .4; cursor: not-allowed; }
+    .lab-scrub-wrap { flex: 1; min-width: 0; }
+    .lab-time { margin-top: 0.15rem; font-size: 0.75rem; color: #9ca3af; font-variant-numeric: tabular-nums; }
+    .lab-range { width: 100%; height: 1.25rem; margin: 0; background: transparent; -webkit-appearance: none; appearance: none; cursor: pointer; }
+    .lab-range::-webkit-slider-runnable-track { height: 0.4rem; border-radius: 9999px; background: rgba(255,255,255,0.18); }
+    .lab-range::-moz-range-track { height: 0.4rem; border-radius: 9999px; background: rgba(255,255,255,0.18); }
+    .lab-range::-webkit-slider-thumb { -webkit-appearance: none; width: 0.95rem; height: 0.95rem; margin-top: -0.28rem; border-radius: 9999px; background: #fff; box-shadow: 0 0 0 3px rgba(124,58,237,0.6); }
+    .lab-range::-moz-range-thumb { width: 0.95rem; height: 0.95rem; border: 0; border-radius: 9999px; background: #fff; box-shadow: 0 0 0 3px rgba(124,58,237,0.6); }
+    .lab-range:focus-visible { outline: 2px solid #a78bfa; outline-offset: 3px; border-radius: 9999px; }
+    .lab-range:disabled { cursor: not-allowed; opacity: .5; }
+    .lab-jumps { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .lab-chip { border: 1px solid rgba(255,255,255,0.14); border-radius: 9999px; padding: 0.25rem 0.7rem; font-size: 0.75rem; color: #e5e7eb; background: rgba(17,24,39,.8); cursor: pointer; }
+    .lab-chip:hover:not(:disabled) { border-color: #8b5cf6; }
+    .lab-chip:disabled { opacity: .45; cursor: not-allowed; }
+    .lab-yt-caption, .lab-yt-song-caption { font-size: 0.7rem; color: #6b7280; margin-bottom: 0.3rem; }
+    .lab-yt-song { position: relative; width: 100%; min-height: 200px; aspect-ratio: 16 / 9; border-radius: 0.75rem; overflow: hidden; background: #000; }
+    .lab-yt-song iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .lab-right { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+    .lab-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .lab-tabs button { padding: 0.6rem 0.9rem; border: 0; border-bottom: 2px solid transparent; background: transparent; color: #9ca3af; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-bottom: -1px; }
+    .lab-tabs button:hover { color: #fff; }
+    .lab-tabs button[aria-selected="true"] { color: #fff; border-bottom-color: #8b5cf6; }
+    .lab-tabs button:focus-visible { outline: 2px solid #a78bfa; outline-offset: -2px; }
+    .lab-panel[hidden] { display: none; }
+    .lab-songs { display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); gap: 0.5rem; }
+    .lab-song { display: flex; flex-direction: column; text-align: left; border: 1px solid rgba(255,255,255,0.12); border-radius: 0.75rem; padding: 0.5rem 0.75rem; background: rgba(17,24,39,.7); color: inherit; cursor: pointer; }
+    .lab-song:hover { border-color: rgba(139,92,246,.6); }
+    .lab-song[aria-pressed="true"] { border-color: #8b5cf6; background: rgba(76,29,149,0.35); }
+    .lab-song-title { font-size: 0.875rem; font-weight: 600; color: #fff; }
+    .lab-song-artist { font-size: 0.75rem; color: #9ca3af; }
+    .lab-note { margin-top: 0.75rem; font-size: 0.875rem; line-height: 1.5; color: #9ca3af; max-width: 40rem; }
+    .lab-link-form { margin-top: 1rem; max-width: 40rem; }
+    .lab-label { display: block; margin-bottom: 0.3rem; font-size: 0.875rem; font-weight: 600; color: #fff; }
+    .lab-link-row { display: flex; gap: 0.5rem; }
+    .lab-link-row input { flex: 1; min-width: 0; border: 1px solid #374151; border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-size: 0.875rem; background: #0b0f19; color: #f3f4f6; }
+    .lab-link-row input:focus { outline: none; border-color: #8b5cf6; }
+    .lab-link-row button, .lab-button { border: 0; border-radius: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600; color: #fff; background: #7c3aed; cursor: pointer; }
+    .lab-link-row button:hover, .lab-button:hover { background: #8b5cf6; }
+    .lab-link-msg { margin-top: 0.4rem; min-height: 1rem; font-size: 0.75rem; line-height: 1.4; color: #7dd3fc; }
+    .lab-files { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: end; margin-top: 0.75rem; }
+    .lab-file { display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.8rem; color: #d1d5db; }
+    .lab-file input { max-width: 15rem; font-size: 0.8rem; color: #9ca3af; }
+    .lab-details { font-size: 0.8rem; color: #9ca3af; }
+    .lab-details summary { cursor: pointer; color: #d1d5db; }
+    .lab-details summary:hover { color: #fff; }
+    .lab-details p, .lab-details ul { margin-top: 0.5rem; line-height: 1.5; }
+    .lab-details ul { list-style: disc; padding-left: 1.2rem; display: grid; gap: 0.5rem; }
+    .lab-details strong { color: #e5e7eb; }
+    .lab-engine { border: 1px solid rgba(255,255,255,0.08); border-radius: 1rem; padding: 1rem 1.1rem; background: rgba(17,24,39,.7); }
+    .lab-engine-head { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+    .lab-engine-title { font-weight: 700; color: #fff; }
+    .lab-state { font-size: 0.75rem; color: #9ca3af; }
+    .lab-state[data-kind="ok"] { color: #6ee7b7; }
+    .lab-state[data-kind="warn"] { color: #fcd34d; }
+    .lab-state[data-kind="busy"] { color: #c4b5fd; }
+    .lab-verdict { margin-top: 0.5rem; font-size: 0.9rem; line-height: 1.5; color: #e5e7eb; }
+    .lab-fact { margin-top: 0.25rem; font-size: 0.8rem; line-height: 1.5; color: #9ca3af; }
+    .lab-fact:empty, .lab-verdict:empty { display: none; }
+    .lab-found { font-variant-numeric: tabular-nums; }
+    .lab-ribbon-figure figcaption { margin-top: 0.4rem; font-size: 0.75rem; color: #6b7280; max-width: 40rem; }
+    .lab-ribbon { width: 100%; height: auto; display: block; }
+    .lab-ribbon:empty { display: none; }
+    .lab-ribbon:empty + figcaption { display: none; }
+    .rb-label { fill: #9ca3af; font-size: 13px; font-weight: 600; }
+    .rb-tick { fill: #6b7280; font-size: 11px; font-variant-numeric: tabular-nums; }
+    .rb-offset { fill: #fff; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; paint-order: stroke; stroke: rgba(11,15,25,.85); stroke-width: 4px; }
+    .lab-live { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: 0.75rem 1rem; margin: 0; }
+    .lab-live dt { font-size: 0.7rem; color: #6b7280; }
+    .lab-live dd { margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #fff; font-variant-numeric: tabular-nums; }
+    .lab-honest { max-width: 44rem; }
+    @media (prefers-reduced-motion: reduce) { .lab-cover { transition: none; } }
     html { scroll-behavior: smooth; }
     section { scroll-margin-top: 5rem; }
   </style>
@@ -58,6 +163,7 @@
         <a href="#compare" class="hover:text-purple-400">Compared</a>
         <a href="#quickstart" class="hover:text-purple-400">Quickstart</a>
         <a href="#try" class="hover:text-purple-400">Try it</a>
+        <a href="#languages" class="hover:text-purple-400">Languages</a>
         <a href="#status" class="hover:text-purple-400">Status</a>
         <a href="#collaborate" class="hover:text-purple-400">Collaborate</a>
       </nav>
@@ -346,8 +452,119 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
   </section>
 
   <!-- Try it -->
-  <section id="try" class="py-14 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-gray-800">
+  <section id="try" class="py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-gray-800">
     <h2 class="text-3xl font-extrabold text-white mb-3">Try it</h2>
+    <p class="text-gray-400 mb-8 max-w-3xl">The sync engine is compiled to JavaScript and runs in this page. Pick a real song: its official video from YouTube plays behind it as a vertical canvas, held on the song's second by the same code the apps use. <strong class="text-gray-200">Drag the slider</strong> and the picture follows.</p>
+
+    <div id="lab" class="lab">
+      <!-- the vertical canvas -->
+      <div class="lab-left">
+        <div class="lab-phone">
+          <div class="lab-stage">
+            <video id="lab-video" muted playsinline preload="auto" hidden></video>
+            <div id="lab-yt-canvas" class="lab-yt-canvas"><div id="lab-yt-canvas-player"></div></div>
+            <div id="lab-cover" class="lab-cover" data-visible="true">
+              <img id="lab-cover-img" alt="" referrerpolicy="no-referrer">
+              <p id="lab-cover-text" class="lab-cover-text"></p>
+            </div>
+            <div id="lab-badge" class="lab-badge lab-badge--idle" role="status" aria-live="polite">Demo not loaded</div>
+            <button id="lab-load" type="button" class="lab-load">
+              <span class="lab-load-icon" aria-hidden="true">▶</span>
+              <span id="lab-load-label" class="lab-load-label">Load the demo</span>
+              <span class="lab-load-note">Loads YouTube's embedded players. Nothing else leaves the page.</span>
+            </button>
+            <div class="lab-caption">
+              <div id="lab-title" class="lab-caption-title">Blinding Lights</div>
+              <div id="lab-artist" class="lab-caption-artist">The Weeknd</div>
+            </div>
+          </div>
+        </div>
+        <audio id="lab-audio" preload="auto"></audio>
+        <div class="lab-controls">
+          <button id="lab-play" type="button" class="lab-play" disabled aria-label="Play"><span id="lab-play-icon" aria-hidden="true">▶</span></button>
+          <div class="lab-scrub-wrap">
+            <input id="lab-scrub" type="range" min="0" max="1000" value="0" step="1" disabled aria-label="Seek the song" class="lab-range">
+            <div id="lab-time" class="lab-time">0:00</div>
+          </div>
+        </div>
+        <div id="lab-jumps" class="lab-jumps"></div>
+        <div id="lab-yt-song-box" class="lab-yt-song-box">
+          <div class="lab-yt-song-caption">The song, as YouTube's audio upload. This is the sound you hear.</div>
+          <div class="lab-yt-song"><div id="lab-yt-song"></div></div>
+        </div>
+      </div>
+
+      <div class="lab-right">
+        <div class="lab-tabs" role="tablist" aria-label="What to play">
+          <button type="button" role="tab" data-lab-tab="songs" aria-selected="true">Real songs</button>
+          <button type="button" role="tab" data-lab-tab="sample" aria-selected="false">Measure in this page</button>
+          <button type="button" role="tab" data-lab-tab="files" aria-selected="false">Your own files</button>
+        </div>
+
+        <div data-lab-panel="songs" class="lab-panel">
+          <div id="lab-song-list" class="lab-songs"></div>
+          <p id="lab-song-note" class="lab-note"></p>
+          <form id="lab-link-form" class="lab-link-form">
+            <label for="lab-link" class="lab-label">Or paste a YouTube link</label>
+            <div class="lab-link-row">
+              <input id="lab-link" type="text" inputmode="url" autocomplete="off" placeholder="https://www.youtube.com/watch?v=…">
+              <button type="submit">Play</button>
+            </div>
+            <p id="lab-link-msg" class="lab-link-msg" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div data-lab-panel="sample" class="lab-panel" hidden>
+          <p class="lab-note">A short song and a music video made for this page: the video starts 5 s before the song and one 10 s stretch of the song was cut out of it. The engine reads the two files' headers here, in your browser, and finds both offsets.</p>
+        </div>
+
+        <div data-lab-panel="files" class="lab-panel" hidden>
+          <p class="lab-note">Any song and its music video, as MP4 or M4A files with AAC audio. They stay on your computer: the engine reads their headers from disk.</p>
+          <div class="lab-files">
+            <label class="lab-file"><span>Song</span><input id="lab-song-file" type="file" accept=".m4a,.mp4,.mov,audio/mp4,video/mp4"></label>
+            <label class="lab-file"><span>Music video</span><input id="lab-video-file" type="file" accept=".mp4,.mov,video/mp4"></label>
+            <button id="lab-measure-files" type="button" class="lab-button">Measure</button>
+          </div>
+          <details class="lab-details"><summary>Where to get two such files</summary>
+            <p>Your own downloads work. With yt-dlp: <code>yt-dlp -f "ba[ext=m4a]" -o song.m4a SONG_URL</code> and <code>yt-dlp -f "b[ext=mp4]" -o video.mp4 VIDEO_URL</code>.</p>
+          </details>
+        </div>
+
+        <div class="lab-engine" aria-live="polite">
+          <div class="lab-engine-head"><span class="lab-engine-title">What the engine found</span><span id="lab-state" class="lab-state" data-kind="idle">Not loaded</span></div>
+          <p id="lab-verdict" class="lab-verdict"></p>
+          <p id="lab-reads" class="lab-fact"></p>
+          <p id="lab-timing" class="lab-fact"></p>
+          <p id="lab-found" class="lab-fact lab-found"></p>
+        </div>
+
+        <figure class="lab-ribbon-figure">
+          <svg id="lab-ribbon" class="lab-ribbon" viewBox="0 0 1000 200" role="img" aria-label="How the song's timeline maps onto the video's"></svg>
+          <figcaption>The map. Each coloured ribbon is a stretch of the song and where it sits in the video; the dashed line joins the song's position now to the video's.</figcaption>
+        </figure>
+
+        <dl class="lab-live">
+          <div><dt>song</dt><dd id="live-song">—</dd></div>
+          <div><dt>video</dt><dd id="live-video">—</dd></div>
+          <div><dt>should be at</dt><dd id="live-target">—</dd></div>
+          <div><dt>drift</dt><dd id="live-drift">—</dd></div>
+          <div><dt>decision</dt><dd id="live-action">—</dd></div>
+          <div><dt>hard seeks</dt><dd id="live-seeks">—</dd></div>
+        </dl>
+
+        <details class="lab-details lab-honest">
+          <summary>What runs here, and what does not</summary>
+          <ul>
+            <li><strong>Running in your browser:</strong> the library's Kotlin sync code (<code>opencanvas-engine.mjs</code>, 99 KB compressed): MP4 header parsing, envelopes, alignment and the policy that decides seek, hold or still cover. On the second and third tab it measures a new pair live.</li>
+            <li><strong>Real songs:</strong> the maps come from the library running on a device against YouTube's own files, because a page is not allowed to read YouTube's media bytes. The page then drives the policy with them.</li>
+            <li><strong>Different from the apps:</strong> YouTube's embedded players cannot change speed in fine steps, so the real-songs tab corrects drift by seeking (past 0.3 s). The apps nudge the speed by up to 5 %.</li>
+            <li><strong>Measuring any YouTube link in a page</strong> needs a small relay that adds the headers browsers require; the engine itself already runs here.</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+
+    <h3 class="text-2xl font-bold text-white mt-14 mb-3">Install the demo builds</h3>
     <p class="text-gray-400 mb-6 max-w-3xl">Demo builds of BitChord with OpenCanvas, so you can see it on your own songs without building anything. Test builds, not official BitChord releases.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card rounded-2xl p-6"><h3 class="text-white font-bold mb-1">Windows</h3><p class="text-sm text-gray-400">Portable zip: unzip and run <code>BitChord.exe</code>. Unsigned, so SmartScreen may warn.</p></div>
@@ -359,6 +576,85 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
       <a href="https://github.com/Vijay-Janarthanan/OpenCanvas/releases" target="_blank" rel="noopener" class="px-6 py-3 rounded-xl bg-surface-800 hover:bg-surface-700 text-white border border-gray-700 font-semibold inline-block">All files and checksums</a>
     </p>
     <p class="text-xs text-gray-500 mt-4">Play a song without label artwork, open the full player and seek: the video follows. Checksums and notes are on the release page. BitChord is GPLv3; the source of the builds is <a class="text-purple-400" href="https://github.com/kushagrasinghx/BitChord/pull/646" target="_blank" rel="noopener">the pull request branch</a>.</p>
+  </section>
+
+  <!-- Languages -->
+  <section id="languages" class="py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-gray-800">
+    <h2 class="text-3xl font-extrabold text-white mb-3">Use it from your language</h2>
+    <p class="text-gray-400 mb-8 max-w-3xl">The engine is Kotlin, so Android and the JVM get all of it. Everything that is pure maths (reading the MP4 headers, aligning, deciding where the picture belongs) also runs in a browser, and the part every player needs, the map and the policy, is ported to TypeScript and Dart. All of them are tested against the same vectors.</p>
+
+    <div class="glass-card rounded-2xl overflow-x-auto mb-8">
+      <table>
+        <thead><tr><th>Language / platform</th><th>What you get</th><th>Status</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Kotlin · Android, desktop JVM</td><td>everything: search, ranking, stream resolution, measuring, policy, cache</td><td>🟢 Live</td><td><a class="text-purple-400" href="#quickstart">Quickstart</a></td></tr>
+          <tr><td>Kotlin/JS · browsers, Node</td><td>measuring from MP4 headers (<code>measure</code>), policy (<code>WebCanvasPolicy</code>); no search or stream resolution</td><td>🟢 Live in the lab above</td><td><code>tools/build-web-engine.sh</code></td></tr>
+          <tr><td>TypeScript · web, React Native</td><td><code>SyncMap</code>, <code>CanvasSyncPolicy</code>, crop filters, React view</td><td>🟡 Policy only</td><td><code>packages/opencanvas-js</code></td></tr>
+          <tr><td>Dart · Flutter</td><td><code>SyncMap</code>, <code>CanvasSyncPolicy</code>, crop kinematics, a view</td><td>🟡 Policy only</td><td><code>packages/opencanvas-flutter</code></td></tr>
+          <tr><td>Java</td><td>callable through the Kotlin API; there is no Java-friendly facade (callbacks instead of <code>suspend</code> and <code>Flow</code>) yet</td><td>🔵 Open</td><td>contribution welcome</td></tr>
+          <tr><td>Swift · iOS, macOS</td><td>not started: the Kotlin core needs a Kotlin/Native target and an HTTP and storage layer, or a port from the vectors below</td><td>🔵 Not started</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="glass-card rounded-2xl p-6">
+        <h3 class="text-lg font-bold text-white mb-3">In a browser: measure two files, keep a <code>&lt;video&gt;</code> on the song</h3>
+        <div class="bg-surface-900 border border-gray-800 rounded-xl p-4 overflow-x-auto code-container relative">
+          <button class="code-copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre class="text-xs text-gray-300 leading-relaxed"><code>import { measure, WebCanvasPolicy } from './opencanvas-engine.mjs';
+
+// anything that can read a byte range: a File, or fetch() with a Range header
+const reader = (file) => ({
+  length: file.size,
+  read: (from, count) =&gt; file.slice(from, from + count).arrayBuffer(),
+});
+
+const map = JSON.parse(await measure(reader(songFile), reader(videoFile)));
+// { ok, confidence, segments: [{ songStartMs, songEndMs, offsetMs, rate }], ... }
+
+const policy = new WebCanvasPolicy(JSON.stringify(map.segments), map.videoSeconds * 1000);
+setInterval(() =&gt; {
+  const a = JSON.parse(policy.decide(audio.currentTime * 1000, video.currentTime * 1000,
+                                     !audio.paused, video.readyState &gt;= 2));
+  if (a.kind === 'seek') video.currentTime = a.videoMs / 1000;
+  if (a.kind === 'nudge') video.playbackRate = a.speed;
+}, 250);</code></pre>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">Only the headers are read: about 10 KB of the song and 55 KB of the video in the lab, whatever the files' size. Both must be MP4/M4A with AAC audio.</p>
+      </div>
+      <div class="glass-card rounded-2xl p-6">
+        <h3 class="text-lg font-bold text-white mb-3">TypeScript and Dart: the map and the policy</h3>
+        <div class="bg-surface-900 border border-gray-800 rounded-xl p-4 overflow-x-auto code-container relative">
+          <button class="code-copy-btn" onclick="copyCode(this)">Copy</button>
+          <pre class="text-xs text-gray-300 leading-relaxed"><code>// TypeScript (@opencanvas/core)
+const map = SyncMap.fromJson(storedJson);          // the JSON the Kotlin core stores
+const policy = new CanvasSyncPolicy(map, videoMs);
+const action = policy.decide(songMs, videoMs, playing, ready);
+// { kind: 'seek', videoMs } | { kind: 'nudge', speed } | 'hold' | 'hidden' | 'ended'
+
+// Dart (open_canvas)
+final policy = CanvasSyncPolicy(SyncMap.fromJson(json), videoMs);
+switch (policy.decide(songMs, videoMs, songPlaying: true, videoReady: ready)) {
+  case SeekTo(:final videoMs): player.seekTo(videoMs);
+  case Nudge(:final speed): player.setSpeed(speed);
+  case Hidden() || Ended(): showCover();
+  case Hold(): break;
+}</code></pre>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">These ports take a map; they do not measure one. Get it from the Kotlin core, from a community map, or with the browser engine on the left.</p>
+      </div>
+    </div>
+
+    <div class="glass-card rounded-2xl p-6 max-w-4xl">
+      <h3 class="text-lg font-bold text-white mb-2">Porting it to another language (Swift, Python, C#, …)</h3>
+      <p class="text-sm text-gray-400 mb-3">The policy and the map are about 200 lines of plain arithmetic, with no player and no network. A port is done when it passes <a class="text-purple-400" href="https://github.com/Vijay-Janarthanan/OpenCanvas/blob/main/packages/conformance/sync-vectors.json" target="_blank" rel="noopener"><code>packages/conformance/sync-vectors.json</code></a>: 87 checks of <code>offsetAt</code>, <code>decide</code> and <code>seekDetected</code> that the Kotlin, TypeScript and Dart implementations all pass (CI runs the three).</p>
+      <ul class="text-sm text-gray-300 list-disc pl-5 space-y-1">
+        <li>A <strong>map</strong> is a list of stretches <code>{ songStartMs, songEndMs, offsetMs, rate }</code>: inside one, <code>video = song + offsetMs + (rate − 1) × (song − songStartMs)</code>. Outside every stretch there is no picture.</li>
+        <li>The <strong>policy</strong> is a pure function of (song position, video position, song playing, video ready): hidden, ended, hold, seek or nudge, with 150 ms tolerance and a hard seek past 500 ms.</li>
+        <li><strong>Measuring</strong> (reading AAC frame sizes from the <code>moov</code> box, turning them into 50 Hz envelopes, aligning with FFT and Viterbi) is the larger part; the Kotlin source in <code>packages/opencanvas-core/src/commonMain</code> is the reference and has no platform dependencies.</li>
+      </ul>
+    </div>
   </section>
 
   <!-- Status -->
@@ -379,7 +675,8 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
           <tr><td>Looping canvas mode (YouTube "Most Replayed" window)</td><td>🟡 Beta</td><td>unchanged from 1.0, not covered by the new benchmarks</td></tr>
           <tr><td>Subject-centred reframing (ONNX face tracker, 1-Euro filter)</td><td>🟡 Experimental</td><td>separate from the synced-video path, unchanged from 1.0</td></tr>
           <tr><td>Community maps (<code>opencanvas-db</code>)</td><td>🟡 Wired in</td><td>no maps published yet</td></tr>
-          <tr><td><code>@opencanvas/core</code> (TypeScript), <code>open_canvas</code> (Dart)</td><td>🟡 Partial</td><td>crop-kinematics/filter ports and a view only — the resolver and sync engine are Kotlin</td></tr>
+          <tr><td>Browser engine (Kotlin/JS: <code>measure</code>, <code>WebCanvasPolicy</code>)</td><td>🟢 Live</td><td>measures a pair of MP4 files and keeps a <code>&lt;video&gt;</code> on the song; runs the lab above</td></tr>
+          <tr><td><code>@opencanvas/core</code> (TypeScript), <code>open_canvas</code> (Dart)</td><td>🟡 Partial</td><td>map and policy ported and tested against the shared vectors, plus crop kinematics and a view; no resolver or measuring (use the Kotlin core or the browser engine)</td></tr>
           <tr><td>iOS</td><td>🔵 Not started</td><td>needs a Kotlin/Native port of the HTTP and storage parts</td></tr>
           <tr><td><code>tools/opencanvas-stream-server</code></td><td>⚪ Optional</td><td>the original Python reference; no app needs it</td></tr>
         </tbody>
@@ -438,5 +735,6 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
       if (navigator.clipboard) { navigator.clipboard.writeText(code).then(done); }
     }
   </script>
+  <script type="module" src="demo/lab.js"></script>
 </body>
 </html>

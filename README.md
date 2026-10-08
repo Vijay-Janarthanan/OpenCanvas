@@ -12,6 +12,8 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/Docs-Website-brightgreen.svg)](https://vijay-janarthanan.github.io/OpenCanvas/)
 
+<p align="center"><a href="https://vijay-janarthanan.github.io/OpenCanvas/#try"><img src="https://img.shields.io/badge/%E2%96%B6%20Try%20it%20live-in%20your%20browser-7c3aed?style=for-the-badge" alt="Try it live in your browser" /></a></p>
+
 ---
 
 <div align="center">
@@ -48,6 +50,8 @@ A streaming app knows the song it is playing. OpenCanvas finds that song's **off
 ---
 
 ## 📲 Try it
+
+**In your browser, nothing to install: [Try it live](https://vijay-janarthanan.github.io/OpenCanvas/#try).** The engine is compiled to JavaScript and runs in the page: pick a real song and its official video plays behind it, held on the song's second as you seek; or let it measure a pair of MP4 files (a sample, or your own) from their headers.
 
 Demo builds of BitChord with OpenCanvas are on the **[Releases page](https://github.com/Vijay-Janarthanan/OpenCanvas/releases)**:
 
@@ -262,7 +266,8 @@ Bring your own resolver by implementing [`StreamBackend`](packages/opencanvas-co
 | Looping canvas mode (YouTube "Most Replayed" window) | 🟡 unchanged from 1.0, not covered by the new benchmarks | JVM / Android |
 | Subject-centred reframing (ONNX face tracker, 1-Euro filter) | 🟡 experimental, unchanged from 1.0, separate from the synced-video path | JVM |
 | Community maps (`opencanvas-db`) | 🟡 wired in; no maps published yet | CDN |
-| `@opencanvas/core` (TypeScript) and `open_canvas` (Dart) | 🟡 crop-kinematics/filter ports and a view only — **the resolver and sync engine are Kotlin** | React Native / Web / Flutter |
+| Browser engine (Kotlin/JS: `measure`, `WebCanvasPolicy`) | 🟢 measures a pair of MP4 files from their headers and keeps a `<video>` on the song; runs the [live demo](https://vijay-janarthanan.github.io/OpenCanvas/#try) (`tools/build-web-engine.sh`) | Browsers, Node |
+| `@opencanvas/core` (TypeScript) and `open_canvas` (Dart) | 🟡 map and policy ported and tested against the same [vectors](packages/conformance/sync-vectors.json) as Kotlin, plus crop kinematics and a view; **no resolver or measuring** (use the Kotlin core or the browser engine) | React Native / Web / Flutter |
 | iOS | 🔵 not started (the engine needs a Kotlin/Native port of the HTTP and storage parts) | |
 | [`tools/opencanvas-stream-server`](tools/opencanvas-stream-server) | optional reference tool; **no app needs it** | Python |
 
