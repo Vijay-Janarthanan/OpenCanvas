@@ -20,6 +20,15 @@ kotlin {
         }
     }
 
+    // The sync engine (frame tables -> envelopes -> alignment -> policy) is common code, so it also runs
+    // in a browser: the docs page measures and plays a song with exactly these classes.
+    js(IR) {
+        browser()
+        binaries.library()
+        useEsModules()
+        generateTypeScriptDefinitions()
+    }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
