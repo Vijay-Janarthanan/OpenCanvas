@@ -296,11 +296,12 @@ internal class CanvasSession(
                     ?: break
             arrived++
             val result = measured?.align
-            val still = measured != null && measured.videoKbps > 0.0 && measured.videoKbps < STILL_PICTURE_KBPS
+            val still = measured != null &&
+                (measured.videoKbps in 0.01..STILL_PICTURE_KBPS || measured.videoMotion < STILL_PICTURE_MOTION)
             log("candidate ${candidate.videoId} \"${candidate.title.take(48)}\" by ${candidate.channelTitle} (${candidate.durationSec}s): " +
                 when {
                     result == null -> "not readable"
-                    still -> "a still picture (${measured.videoKbps.toInt()} kbit/s), not a music video"
+                    still -> "a still picture (${measured.videoKbps.toInt()} kbit/s, motion ${"%.2f".format(measured.videoMotion)}), not a music video"
                     result.error != null -> result.error
                     else -> "confidence ${"%.2f".format(result.confidence)}, ${result.segments.size} segment(s)"
                 })
@@ -429,6 +430,7 @@ internal class CanvasSession(
         const val BATCH_TIMEOUT_MS = 12_000L
         /** Below this the picture is a still image (measured on art-track uploads: 7-27 kbit/s); music videos start well above (slow ones near 80). */
         const val STILL_PICTURE_KBPS = 40.0
+        const val STILL_PICTURE_MOTION = 0.12
         const val CONFIDENT_FIRST_CHOICE = 0.85
     }
 }

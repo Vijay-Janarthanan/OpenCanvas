@@ -26,7 +26,7 @@ object VideoMatcher {
         "behind the scenes", "making of", "teaser", "trailer", "performance", "choreography",
         "dance practice", "interview", "awards", "tour", "tutorial", "b-side", "grammy", "grammys", "talent",
         "tonight", "late late show", "snl", "saturday night live", "unplugged", "acoustic", "mashup", "full album",
-        "episode", "sketch", "shoot", "making", "highlight", "recap", "sing along", "with me", "remix", "edit", "slowed", "sped up", "extended",
+        "full song", "jukebox", "audio song", "episode", "sketch", "shoot", "making", "highlight", "recap", "sing along", "with me", "remix", "edit", "slowed", "sped up", "extended",
     ).map { Regex("(^|[^\\p{L}\\p{N}])" + Regex.escape(it) + "($|[^\\p{L}\\p{N}])") } +
         Regex("\\s@\\s") // "Artist 'Song' @ Some Show": a stage performance
 

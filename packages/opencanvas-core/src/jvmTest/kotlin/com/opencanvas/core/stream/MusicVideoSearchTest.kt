@@ -113,6 +113,15 @@ class MusicVideoSearchTest {
     }
 
     @Test
+    fun aFullSongUploadIsAnAudioPosterNotTheMusicVideo() {
+        val candidates = listOf(
+            VideoCandidate("POSTER00001", "Nenu Nenuga Full Song ll Manmadhudu Songs ll Nagarjuna", "Aditya Music", 260, false),
+            VideoCandidate("VIDEOSONG002", "Nenu Nenuga Lene Video Song | Manmadhudu", "Annapurna Studios", 260, false),
+        )
+        assertEquals(listOf("VIDEOSONG002"), VideoMatcher.rank(candidates, "Nenu Nenuga", "S.P.Charan", 262).map { it.videoId })
+    }
+
+    @Test
     fun aClipIsNeverTheMusicVideo() {
         val candidates = listOf(VideoCandidate("CLIP0000001", "Gangnam Style (Official Music Video)", "officialpsy", 21, true))
         assertEquals(emptyList(), VideoMatcher.rank(candidates, "Gangnam Style", "PSY"))

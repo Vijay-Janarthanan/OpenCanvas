@@ -21,8 +21,17 @@ interface RangeReader {
  * @property videoKbps Average bitrate of the file's video track in kbit/s, `0.0` when it has none or
  *   the header does not say. A still image with a soundtrack (an "audio" or art-track upload) needs
  *   a few kbit/s; a real music video needs a hundred or more.
+ * @property videoMotion Median over mean of the video frame sizes, `1.0` when unknown. A poster or a
+ *   slideshow with a soundtrack costs almost nothing between its key frames, so the median frame is a
+ *   sliver of the mean (a few percent); moving pictures keep their frames of comparable size.
  */
-class AudioFrames(val sizes: IntArray, val frameSeconds: Double, val videoKbps: Double = 0.0)
+class AudioFrames(
+    val sizes: IntArray,
+    val frameSeconds: Double,
+    val videoKbps: Double = 0.0,
+    val videoMotion: Double = 1.0,
+    val keyIrregularity: Double = 0.0,
+)
 
 /**
  * Reads [AudioFrames] from the headers of an MP4 file, with the fewest bytes the layout allows.
@@ -46,10 +55,10 @@ object Mp4FrameSizes {
         null // a damaged or truncated box
     }
 
-    private class Track(val id: Long, val timescale: Long, val sizes: IntArray?, val frameSeconds: Double, val bytes: Long = 0L, val seconds: Double = 0.0)
+    private class Track(val id: Long, val timescale: Long, val sizes: IntArray?, val frameSeconds: Double, val bytes: Long = 0L, val seconds: Double = 0.0, val motion: Double = 1.0, val irregularity: Double = 0.0)
 
     /** What `moov` says about the first audio track and the average bitrate of the first video track. */
-    private class Moov(val audio: Track, val videoKbps: Double, val defaults: Defaults)
+    private class Moov(val audio: Track, val videoKbps: Double, val videoMotion: Double, val irregularity: Double, val defaults: Defaults)
 
     private suspend fun readHeaders(reader: RangeReader): AudioFrames? {
         var position = 0L
@@ -75,7 +84,7 @@ object Mp4FrameSizes {
                 val moov = parseMoov(body) ?: return null
                 val sizes = moov.audio.sizes
                 return if (sizes != null && sizes.isNotEmpty()) {
-                    AudioFrames(sizes, moov.audio.frameSeconds, moov.videoKbps)
+                    AudioFrames(sizes, moov.audio.frameSeconds, moov.videoKbps, moov.videoMotion, moov.irregularity)
                 } else {
                     readFragments(reader, moov.audio, moov.defaults)
                 }
@@ -91,6 +100,8 @@ object Mp4FrameSizes {
     private fun parseMoov(moov: ByteArray): Moov? {
         var audio: Track? = null
         var videoKbps = 0.0
+        var videoMotion = 1.0
+        var irregularity = 0.0
         val durations = HashMap<Long, Long>()
         val sizes = HashMap<Long, Long>()
         for (box in children(moov, 0, moov.size)) {
@@ -99,6 +110,7 @@ object Mp4FrameSizes {
                     val (track, isVideo) = parseTrak(moov, box.start, box.end)
                     if (track != null && audio == null && !isVideo) audio = track
                     if (track != null && isVideo && videoKbps == 0.0 && track.seconds > 0.0) videoKbps = track.bytes * 8.0 / 1000.0 / track.seconds
+                    if (track != null && isVideo && videoMotion == 1.0) { videoMotion = track.motion; irregularity = track.irregularity }
                 }
                 "mvex" -> for (trex in children(moov, box.start, box.end)) {
                     if (trex.type == "trex") {
@@ -109,7 +121,7 @@ object Mp4FrameSizes {
                 }
             }
         }
-        return audio?.let { Moov(it, videoKbps, Defaults(durations, sizes)) }
+        return audio?.let { Moov(it, videoKbps, videoMotion, irregularity, Defaults(durations, sizes)) }
     }
 
     /** The audio or video track in `data[start, end)` (null for any other kind), and whether it is video. */
@@ -120,6 +132,8 @@ object Mp4FrameSizes {
         var isVideo = false
         var sizes: IntArray? = null
         var bytes = 0L
+        var motion = 1.0
+        var irregularity = 0.0
         var totalDuration = 0L
         var totalSamples = 0L
         for (box in children(data, start, end)) {
@@ -139,7 +153,9 @@ object Mp4FrameSizes {
                                     "stsz" -> {
                                         sizes = if (isAudio) readStsz(data, table.start) else null
                                         bytes = sumStsz(data, table.start)
+                                        if (isVideo) motion = motionOf(data, table.start)
                                     }
+                                    "stss" -> irregularity = irregularityOf(data, table.start)
                                     "stts" -> {
                                         val entries = u32(data, table.start + 4).toInt()
                                         for (i in 0 until entries) {
@@ -157,8 +173,28 @@ object Mp4FrameSizes {
         }
         if ((!isAudio && !isVideo) || timescale <= 0L) return null to false
         val frameSeconds = if (totalSamples > 0L) totalDuration.toDouble() / totalSamples / timescale else 0.0
-        val track = Track(id, timescale, if (isAudio) sizes else null, frameSeconds, bytes, totalDuration.toDouble() / timescale)
+        val track = Track(id, timescale, if (isAudio) sizes else null, frameSeconds, bytes, totalDuration.toDouble() / timescale, motion, irregularity)
         return track to isVideo
+    }
+
+    /** Share of the gaps between key frames (from a `stss` box) that differ from the most common gap; 0.0 when it cannot tell. */
+    private fun irregularityOf(data: ByteArray, start: Int): Double {
+        val count = u32(data, start + 4).toInt()
+        if (count < 6) return 0.0
+        val gaps = IntArray(count - 1) { (u32(data, start + 12 + 4 * it) - u32(data, start + 8 + 4 * it)).toInt() }
+        val modal = gaps.toList().groupingBy { it }.eachCount().maxByOrNull { it.value }!!.key
+        return gaps.count { kotlin.math.abs(it - modal) > 1 }.toDouble() / gaps.size
+    }
+
+    /** Median over mean of the sample sizes a `stsz` box lists (see [AudioFrames.videoMotion]); 1.0 when it cannot tell. */
+    private fun motionOf(data: ByteArray, start: Int): Double {
+        val count = u32(data, start + 8).toInt()
+        if (u32(data, start + 4) != 0L || count < 60) return 1.0
+        val sizes = LongArray(count) { u32(data, start + 12 + 4 * it) }
+        val mean = sizes.average()
+        if (mean <= 0.0) return 1.0
+        sizes.sort()
+        return sizes[count / 2] / mean
     }
 
     /** Total size in bytes of all samples a `stsz` box lists. */
