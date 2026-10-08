@@ -45,6 +45,17 @@ A streaming app knows the song it is playing. OpenCanvas finds that song's **off
 
 ---
 
+## 📲 Try it
+
+Demo builds of BitChord with OpenCanvas are on the **[Releases page](https://github.com/Vijay-Janarthanan/OpenCanvas/releases/latest)**:
+
+- **Windows:** `BitChord-OpenCanvas-windows-portable.zip` — unzip and run `BitChord.exe` (unsigned: SmartScreen may warn).
+- **Android:** `BitChord-OpenCanvas-android-arm64-debug.apk` (most phones) or the x86_64 one for emulators.
+
+Play a song without label artwork, open the full player, then seek: the video follows. These are test builds, not official BitChord releases; checksums and notes are on the release page. BitChord is GPLv3 and the source of the builds is [the pull request branch](https://github.com/kushagrasinghx/BitChord/pull/646).
+
+---
+
 ## 🧭 How it works
 
 ```mermaid
