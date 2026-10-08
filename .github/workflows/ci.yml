@@ -49,3 +49,28 @@ jobs:
 
       - name: Verify Maven Publish Setup
         run: chmod +x gradlew && ./gradlew publishToMavenLocal
+
+  ports:
+    name: TypeScript and Dart ports
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: TypeScript tests (map, policy, shared vectors)
+        working-directory: packages/opencanvas-js
+        run: npm ci --no-audit --no-fund && npm run build && npm test
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Dart tests (map, policy, shared vectors)
+        working-directory: packages/opencanvas-flutter
+        run: flutter pub get && flutter test

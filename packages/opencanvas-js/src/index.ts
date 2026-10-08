@@ -7,6 +7,8 @@ export * from './models/types.js';
 export * from './filter/oneEuroFilter.js';
 export * from './filter/cropKinematics.js';
 export * from './filter/sceneCutDetector.js';
+export * from './sync/syncMap.js';
+export * from './sync/canvasSyncPolicy.js';
 export * from './react/OpenCanvasView.js';
 
 export const OPENCANVAS_VERSION = '1.0.0';

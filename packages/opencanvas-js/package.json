@@ -9,6 +9,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "build:demo": "tsc src/sync/syncMap.ts src/sync/canvasSyncPolicy.ts --target ES2022 --module ES2022 --moduleResolution Bundler --strict --skipLibCheck --outDir ../../docs/demo/sync",
     "test": "node --test"
   },
   "keywords": [

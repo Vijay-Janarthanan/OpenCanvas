@@ -1,0 +1,754 @@
+{
+ "description": "Language-neutral test vectors for SyncMap and CanvasSyncPolicy. decide() uses toleranceMs 150 and hardSeekMs 500 unless a case sets them. Expected speeds are compared to 1e-4.",
+ "version": 1,
+ "cases": [
+  {
+   "name": "one constant offset (the video starts 9.9 s before the song)",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 174000,
+     "offsetMs": 9910
+    }
+   ],
+   "videoDurationMs": 240000,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": 9910
+    },
+    {
+     "songMs": 1,
+     "expect": 9910
+    },
+    {
+     "songMs": 100000,
+     "expect": 9910
+    },
+    {
+     "songMs": 173999,
+     "expect": 9910
+    },
+    {
+     "songMs": 174000,
+     "expect": null
+    },
+    {
+     "songMs": 500000,
+     "expect": null
+    }
+   ],
+   "decide": [
+    {
+     "songMs": 0,
+     "videoMs": 9910,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 0,
+     "videoMs": 9910,
+     "playing": false,
+     "ready": true,
+     "expect": {
+      "kind": "hold"
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 14910,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 15060,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 15061,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 0.96225
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 14510,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1.05
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 15410,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 0.95
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 15411,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "seek",
+      "videoMs": 14910
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 0,
+     "playing": false,
+     "ready": true,
+     "expect": {
+      "kind": "seek",
+      "videoMs": 14910
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 14950,
+     "playing": false,
+     "ready": true,
+     "expect": {
+      "kind": "hold"
+     }
+    },
+    {
+     "songMs": 5000,
+     "videoMs": 0,
+     "playing": true,
+     "ready": false,
+     "expect": {
+      "kind": "hold"
+     }
+    },
+    {
+     "songMs": 174000,
+     "videoMs": 0,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "hidden"
+     }
+    }
+   ]
+  },
+  {
+   "name": "an edited video: three stretches, a hard seek at every edit point",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 32500,
+     "offsetMs": 12891
+    },
+    {
+     "songStartMs": 32500,
+     "songEndMs": 82500,
+     "offsetMs": 37975
+    },
+    {
+     "songStartMs": 82500,
+     "songEndMs": 177599,
+     "offsetMs": 76916
+    }
+   ],
+   "videoDurationMs": 300000,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": 12891
+    },
+    {
+     "songMs": 32499,
+     "expect": 12891
+    },
+    {
+     "songMs": 32500,
+     "expect": 37975
+    },
+    {
+     "songMs": 82499,
+     "expect": 37975
+    },
+    {
+     "songMs": 82500,
+     "expect": 76916
+    },
+    {
+     "songMs": 177598,
+     "expect": 76916
+    },
+    {
+     "songMs": 177599,
+     "expect": null
+    }
+   ],
+   "decide": [
+    {
+     "songMs": 1000,
+     "videoMs": 13891,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 32500,
+     "videoMs": 45291,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "seek",
+      "videoMs": 70475
+     }
+    },
+    {
+     "songMs": 82500,
+     "videoMs": 120375,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "seek",
+      "videoMs": 159416
+     }
+    },
+    {
+     "songMs": 100000,
+     "videoMs": 176916,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 177599,
+     "videoMs": 0,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "hidden"
+     }
+    },
+    {
+     "songMs": 200000,
+     "videoMs": 0,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "hidden"
+     }
+    }
+   ]
+  },
+  {
+   "name": "a gap in the map: no matching picture there",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 10000,
+     "offsetMs": 1000
+    },
+    {
+     "songStartMs": 20000,
+     "songEndMs": 30000,
+     "offsetMs": 5000
+    }
+   ],
+   "videoDurationMs": 100000,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": 1000
+    },
+    {
+     "songMs": 9999,
+     "expect": 1000
+    },
+    {
+     "songMs": 10000,
+     "expect": null
+    },
+    {
+     "songMs": 15000,
+     "expect": null
+    },
+    {
+     "songMs": 19999,
+     "expect": null
+    },
+    {
+     "songMs": 20000,
+     "expect": 5000
+    },
+    {
+     "songMs": 29999,
+     "expect": 5000
+    },
+    {
+     "songMs": 30000,
+     "expect": null
+    }
+   ],
+   "decide": [
+    {
+     "songMs": 5000,
+     "videoMs": 6000,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 15000,
+     "videoMs": 16000,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "hidden"
+     }
+    },
+    {
+     "songMs": 25000,
+     "videoMs": 30000,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 25000,
+     "videoMs": 30500,
+     "playing": false,
+     "ready": true,
+     "expect": {
+      "kind": "seek",
+      "videoMs": 30000
+     }
+    }
+   ]
+  },
+  {
+   "name": "a video that starts after the song (negative offset): hidden until it begins",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 200000,
+     "offsetMs": -311
+    }
+   ],
+   "videoDurationMs": 210000,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": -311
+    },
+    {
+     "songMs": 311,
+     "expect": -311
+    },
+    {
+     "songMs": 312,
+     "expect": -311
+    },
+    {
+     "songMs": 100000,
+     "expect": -311
+    }
+   ],
+   "decide": [
+    {
+     "songMs": 0,
+     "videoMs": 0,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "hidden"
+     }
+    },
+    {
+     "songMs": 310,
+     "videoMs": 0,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "hidden"
+     }
+    },
+    {
+     "songMs": 311,
+     "videoMs": 0,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 312,
+     "videoMs": 1,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 1000,
+     "videoMs": 689,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    }
+   ]
+  },
+  {
+   "name": "a video shorter than the song never loops",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 300000,
+     "offsetMs": 0
+    }
+   ],
+   "videoDurationMs": 100000,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": 0
+    },
+    {
+     "songMs": 99999,
+     "expect": 0
+    },
+    {
+     "songMs": 100000,
+     "expect": 0
+    }
+   ],
+   "decide": [
+    {
+     "songMs": 99999,
+     "videoMs": 99999,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 100000,
+     "videoMs": 99999,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "ended"
+     }
+    },
+    {
+     "songMs": 250000,
+     "videoMs": 99999,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "ended"
+     }
+    }
+   ]
+  },
+  {
+   "name": "unknown video length (0): only the start boundary applies",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 300000,
+     "offsetMs": 2000
+    }
+   ],
+   "videoDurationMs": 0,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": 2000
+    },
+    {
+     "songMs": 1000,
+     "expect": 2000
+    }
+   ],
+   "decide": [
+    {
+     "songMs": 250000,
+     "videoMs": 252000,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    }
+   ]
+  },
+  {
+   "name": "a film video at 0.9225 of the album track speed",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 240000,
+     "offsetMs": 500,
+     "rate": 0.9225
+    }
+   ],
+   "videoDurationMs": 300000,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": 500
+    },
+    {
+     "songMs": 60000,
+     "expect": -4150
+    },
+    {
+     "songMs": 239999,
+     "expect": -18100
+    }
+   ],
+   "decide": [
+    {
+     "songMs": 0,
+     "videoMs": 500,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 0.9225
+     }
+    },
+    {
+     "songMs": 60000,
+     "videoMs": 55850,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 0.9225
+     }
+    },
+    {
+     "songMs": 60000,
+     "videoMs": 56500,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "seek",
+      "videoMs": 55850
+     }
+    }
+   ]
+  },
+  {
+   "name": "a tighter tolerance and hard-seek limit",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 100000,
+     "offsetMs": 0
+    }
+   ],
+   "videoDurationMs": 100000,
+   "toleranceMs": 300,
+   "hardSeekMs": 300,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": 0
+    }
+   ],
+   "decide": [
+    {
+     "songMs": 10000,
+     "videoMs": 10250,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 10000,
+     "videoMs": 10300,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "nudge",
+      "speed": 1
+     }
+    },
+    {
+     "songMs": 10000,
+     "videoMs": 10301,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "seek",
+      "videoMs": 10000
+     }
+    },
+    {
+     "songMs": 10000,
+     "videoMs": 9699,
+     "playing": true,
+     "ready": true,
+     "expect": {
+      "kind": "seek",
+      "videoMs": 10000
+     }
+    }
+   ]
+  },
+  {
+   "name": "overlapping input is trimmed (the later segment starts where the earlier one ends)",
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 10000,
+     "offsetMs": 100
+    },
+    {
+     "songStartMs": 5000,
+     "songEndMs": 15000,
+     "offsetMs": 200
+    }
+   ],
+   "videoDurationMs": 100000,
+   "offsetAt": [
+    {
+     "songMs": 0,
+     "expect": 100
+    },
+    {
+     "songMs": 4999,
+     "expect": 100
+    },
+    {
+     "songMs": 5000,
+     "expect": 100
+    },
+    {
+     "songMs": 9999,
+     "expect": 100
+    },
+    {
+     "songMs": 10000,
+     "expect": 200
+    },
+    {
+     "songMs": 14999,
+     "expect": 200
+    },
+    {
+     "songMs": 15000,
+     "expect": null
+    }
+   ],
+   "decide": []
+  }
+ ],
+ "seekDetected": [
+  {
+   "prevSongMs": 10000,
+   "songMs": 10250,
+   "elapsedWallMs": 250,
+   "playing": true,
+   "expect": false
+  },
+  {
+   "prevSongMs": 10000,
+   "songMs": 11000,
+   "elapsedWallMs": 250,
+   "playing": true,
+   "expect": false
+  },
+  {
+   "prevSongMs": 10000,
+   "songMs": 11251,
+   "elapsedWallMs": 250,
+   "playing": true,
+   "expect": true
+  },
+  {
+   "prevSongMs": 10000,
+   "songMs": 10000,
+   "elapsedWallMs": 250,
+   "playing": false,
+   "expect": false
+  },
+  {
+   "prevSongMs": 10000,
+   "songMs": 12500,
+   "elapsedWallMs": 250,
+   "playing": false,
+   "expect": true
+  },
+  {
+   "prevSongMs": 10000,
+   "songMs": 9000,
+   "elapsedWallMs": 250,
+   "playing": true,
+   "expect": true
+  },
+  {
+   "prevSongMs": 60000,
+   "songMs": 10000,
+   "elapsedWallMs": 250,
+   "playing": true,
+   "expect": true
+  },
+  {
+   "prevSongMs": 10000,
+   "songMs": 10260,
+   "elapsedWallMs": -5,
+   "playing": true,
+   "expect": false
+  }
+ ]
+}
