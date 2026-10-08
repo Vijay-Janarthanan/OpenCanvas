@@ -126,7 +126,8 @@ object YouTubeStreamResolver {
             val start = segment.finiteNumber("songStartMs") ?: return@mapNotNull null
             val end = segment.finiteNumber("songEndMs") ?: return@mapNotNull null
             val segmentOffset = segment.finiteNumber("offsetMs") ?: return@mapNotNull null
-            if (end <= start) null else SyncSegment(start.roundToLong(), end.roundToLong(), segmentOffset.roundToLong())
+            val rate = segment.finiteNumber("rate")?.takeIf { it > 0.5 && it < 2.0 } ?: 1.0
+            if (end <= start) null else SyncSegment(start.roundToLong(), end.roundToLong(), segmentOffset.roundToLong(), rate = rate)
         }.orEmpty()
         return SyncOffset(
             offsetMs = offset.roundToLong(),

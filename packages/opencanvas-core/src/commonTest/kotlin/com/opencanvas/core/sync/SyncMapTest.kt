@@ -138,4 +138,13 @@ class SyncMapTest {
         assertTrue(constant.isVisible(0))
         assertFalse(CanvasSyncPolicy(-5_000, 100_000).isVisible(1_000)) // before the video starts
     }
+
+    @Test
+    fun aSegmentWithARateDriftsItsOffsetAlongTheSong() {
+        val map = SyncMap(listOf(SyncSegment(10_000, 110_000, 5_000, rate = 1.0417)))
+        assertEquals(5_000L, map.offsetAt(10_000))
+        assertEquals(5_000L + 4_170L, map.offsetAt(110_000 - 1))
+        assertEquals(1.0417, map.rateAt(50_000))
+        assertEquals(1.0, map.rateAt(5_000))
+    }
 }

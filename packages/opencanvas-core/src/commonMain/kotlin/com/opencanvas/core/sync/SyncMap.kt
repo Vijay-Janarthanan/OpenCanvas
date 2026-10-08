@@ -1,10 +1,16 @@
 package com.opencanvas.core.sync
 
 import kotlinx.serialization.Serializable
+import kotlin.math.roundToLong
 
 /**
  * One stretch of a song that maps onto its music video with a single constant offset:
  * for `songStartMs <= songTime < songEndMs`, `videoTime = songTime + offsetMs`.
+ *
+ * A video whose music runs at another speed than the song's (film videos are often 25/24 faster or
+ * slower than the album track) has a [rate] other than 1: the video advances [rate] seconds per song
+ * second, and [offsetMs] is `videoTime - songTime` at [songStartMs]; at any song time inside,
+ * `videoTime = songTime + offsetMs + (rate - 1) * (songTime - songStartMs)`.
  *
  * @property ncc Mean normalised cross-correlation of the matched audio in `0..1`, a diagnostic of how
  *   well the segment matches; `0.0` when it was not measured.
@@ -15,10 +21,16 @@ data class SyncSegment(
     val songEndMs: Long,
     val offsetMs: Long,
     val ncc: Double = 0.0,
+    val rate: Double = 1.0,
 ) {
     init {
         require(songEndMs > songStartMs) { "segment must have a positive length: $songStartMs..$songEndMs" }
+        require(rate > 0.5 && rate < 2.0) { "rate out of range: $rate" }
     }
+
+    /** `videoTime - songTime` at [songMs] (extrapolated, whether or not it lies inside the segment). */
+    fun offsetAtMs(songMs: Long): Long =
+        if (rate == 1.0) offsetMs else offsetMs + ((rate - 1.0) * (songMs - songStartMs)).roundToLong()
 
     operator fun contains(songMs: Long): Boolean = songMs >= songStartMs && songMs < songEndMs
 }
@@ -54,9 +66,18 @@ class SyncMap(segments: List<SyncSegment>) {
         // Few segments (a handful at most): a linear scan is as fast as a binary search.
         for (segment in segments) {
             if (songMs < segment.songStartMs) return null
-            if (songMs < segment.songEndMs) return segment.offsetMs
+            if (songMs < segment.songEndMs) return segment.offsetAtMs(songMs)
         }
         return null
+    }
+
+    /** How many video seconds pass per song second at [songMs] (1.0 outside every segment). */
+    fun rateAt(songMs: Long): Double {
+        for (segment in segments) {
+            if (songMs < segment.songStartMs) return 1.0
+            if (songMs < segment.songEndMs) return segment.rate
+        }
+        return 1.0
     }
 
     /**
@@ -70,11 +91,11 @@ class SyncMap(segments: List<SyncSegment>) {
             if (songMs < segment.songStartMs) {
                 // in a gap (or before the first segment): whichever neighbour is closer
                 val before = previous ?: return segment.offsetMs
-                return if (songMs - before.songEndMs <= segment.songStartMs - songMs) before.offsetMs else segment.offsetMs
+                return if (songMs - before.songEndMs <= segment.songStartMs - songMs) before.offsetAtMs(before.songEndMs) else segment.offsetMs
             }
             previous = segment
         }
-        return previous?.offsetMs ?: 0L // past the end: the last segment's offset
+        return previous?.offsetAtMs(previous.songEndMs) ?: 0L // past the end: the last segment's offset
     }
 
     /** Whether the song has a matching picture at [songMs]. */
@@ -99,7 +120,7 @@ class SyncMap(segments: List<SyncSegment>) {
                     out += segment
                 } else if (segment.songEndMs > previous.songEndMs) {
                     // overlaps the previous one: it starts where the previous ends
-                    out += SyncSegment(previous.songEndMs, segment.songEndMs, segment.offsetMs)
+                    out += SyncSegment(previous.songEndMs, segment.songEndMs, segment.offsetAtMs(previous.songEndMs), segment.ncc, segment.rate)
                 }
             }
             return out

@@ -301,4 +301,12 @@ class CanvasSyncPolicyTest {
         // Song reaches past the end of the video: ended, never loops.
         assertEquals(Ended, policy.decide(250_000L, 262_999L, songPlaying = true, videoReady = true))
     }
+
+    @Test
+    fun aVideoAtFilmSpeedIsPlayedAtThatSpeedToKeepUp() {
+        val policy = CanvasSyncPolicy(SyncMap(listOf(SyncSegment(0, 200_000, 1_000, rate = 1.0417))), 300_000)
+        val target = 20_000 + 1_000 + (0.0417 * 20_000).toLong()
+        val action = policy.decide(20_000, target, songPlaying = true, videoReady = true)
+        assertEquals(CanvasSyncAction.Nudge(1.0417f), action)
+    }
 }

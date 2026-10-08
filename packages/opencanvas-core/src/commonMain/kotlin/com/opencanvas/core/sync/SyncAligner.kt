@@ -22,7 +22,20 @@ class AlignResult(
     val coverage: Double,
     val segments: List<SyncSegment>,
     val error: String? = null,
-)
+) {
+    /**
+     * This result for a video whose envelope was stretched by [rate] before aligning (video time =
+     * [rate] x stretched time): each segment gets that rate and its offset converted from the stretched
+     * timeline back to the video's own.
+     */
+    internal fun atRate(rate: Double): AlignResult {
+        val converted = segments.map {
+            SyncSegment(it.songStartMs, it.songEndMs, ((rate - 1.0) * it.songStartMs + rate * it.offsetMs).roundToLong(), it.ncc, rate)
+        }
+        val longest = converted.maxByOrNull { it.songEndMs - it.songStartMs }
+        return AlignResult(longest?.offsetAtMs(0L) ?: 0L, confidence, coverage, converted, error)
+    }
+}
 
 /**
  * Every tunable of the alignment, named after and defaulting to its counterpart in the reference
@@ -122,6 +135,39 @@ object SyncAligner {
         video: FloatArray,
         sampleRate: Int,
         params: AlignParams = AlignParams.ENVELOPE,
+    ): AlignResult {
+        val plain = alignAtRate(track, video, sampleRate, params)
+        if (plain.error == null && plain.confidence >= RATE_SEARCH_BELOW) return plain
+        // Film videos are often 25/24 faster or slower than the album track (the same frames shown at
+        // another frame rate): try those speeds, and keep one only when it clearly beats the plain fit.
+        var best = plain
+        for (rate in FILM_RATES) {
+            val n = (video.size / rate).toInt()
+            if (n < 2) continue
+            val stretched = FloatArray(n) {
+                val x = it * rate
+                val i = x.toInt().coerceAtMost(video.size - 2)
+                val f = (x - i).toFloat()
+                video[i] * (1 - f) + video[i + 1] * f
+            }
+            val fit = alignAtRate(track, stretched, sampleRate, params)
+            if (fit.error != null || fit.confidence < MIN_RATE_CONFIDENCE) continue
+            val rescaled = fit.atRate(rate)
+            if (rescaled.confidence > best.confidence + RATE_MARGIN) best = rescaled
+        }
+        return best
+    }
+
+    private const val RATE_SEARCH_BELOW = 0.75
+    private const val MIN_RATE_CONFIDENCE = 0.5
+    private const val RATE_MARGIN = 0.1
+    private val FILM_RATES = doubleArrayOf(24.0 / 25.0, 25.0 / 24.0)
+
+    private fun alignAtRate(
+        track: FloatArray,
+        video: FloatArray,
+        sampleRate: Int,
+        params: AlignParams,
     ): AlignResult {
         require(sampleRate > 0) { "sampleRate must be > 0, was $sampleRate" }
         val minWindow = (params.minWindowS * sampleRate).toInt()

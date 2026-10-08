@@ -172,13 +172,15 @@ class CanvasSyncPolicy(
         if (videoDurationMs > 0L && target >= videoDurationMs) return CanvasSyncAction.Ended
         if (!videoReady) return CanvasSyncAction.Hold
 
+        // a video whose music runs at another speed than the song's has to play at that speed to keep up
+        val rate = syncMap.rateAt(songPositionMs)
         val drift = videoPositionMs - target
         val absDrift = abs(drift)
         return when {
             !songPlaying ->
                 if (absDrift > toleranceMs) CanvasSyncAction.SeekTo(target) else CanvasSyncAction.Hold
-            absDrift <= toleranceMs -> CanvasSyncAction.Nudge(1.0f)
-            absDrift <= hardSeekMs -> CanvasSyncAction.Nudge(nudgeSpeed(drift))
+            absDrift <= toleranceMs -> CanvasSyncAction.Nudge(rate.toFloat())
+            absDrift <= hardSeekMs -> CanvasSyncAction.Nudge((rate * nudgeSpeed(drift)).toFloat())
             else -> CanvasSyncAction.SeekTo(target)
         }
     }

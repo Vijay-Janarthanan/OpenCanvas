@@ -113,6 +113,7 @@ internal class SyncStore(
                         put("songStartMs", segment.songStartMs)
                         put("songEndMs", segment.songEndMs)
                         put("offsetMs", segment.offsetMs)
+                        if (segment.rate != 1.0) put("rate", segment.rate)
                     })
                 }
             })

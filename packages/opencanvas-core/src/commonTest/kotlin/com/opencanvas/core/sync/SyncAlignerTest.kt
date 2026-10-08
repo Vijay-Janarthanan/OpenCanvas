@@ -181,4 +181,29 @@ class SyncAlignerTest {
         assertEquals(150.0, reference.sameOffsetMs)
         assertEquals(0.25, reference.minCoverage)
     }
+
+    @Test
+    fun aVideoRunningAtFilmSpeedGetsASegmentWithItsRate() {
+        val track = noise(80.0, seed = 7)
+        val ratio = 25.0 / 24.0 // the video plays the song 4 % slower, as a PAL transfer of a film does
+        val offsetS = 12.0
+        val stretched = FloatArray((track.size * ratio).toInt()) {
+            val x = it / ratio
+            val i = x.toInt().coerceAtMost(track.size - 2)
+            val f = (x - i).toFloat()
+            track[i] * (1 - f) + track[i + 1] * f
+        }
+        val video = concat(noise(offsetS, seed = 8), stretched, noise(6.0, seed = 9))
+
+        val result = SyncAligner.align(track, video, rate)
+
+        assertEquals(null, result.error)
+        val segment = result.segments.maxBy { it.songEndMs - it.songStartMs }
+        assertTrue(abs(segment.rate - ratio) < 0.002, "rate ${segment.rate}")
+        for (songMs in listOf(10_000L, 40_000L, 70_000L)) {
+            val expected = (ratio * songMs + offsetS * 1000).toLong()
+            val actual = songMs + SyncMap(result.segments).offsetAt(songMs)!!
+            assertNear(expected, actual, 250, "video time at song $songMs")
+        }
+    }
 }
