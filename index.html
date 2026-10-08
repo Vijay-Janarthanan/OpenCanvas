@@ -47,6 +47,7 @@
         <a href="#benchmarks" class="hover:text-purple-400">Benchmarks</a>
         <a href="#compare" class="hover:text-purple-400">Compared</a>
         <a href="#quickstart" class="hover:text-purple-400">Quickstart</a>
+        <a href="#try" class="hover:text-purple-400">Try it</a>
         <a href="#status" class="hover:text-purple-400">Status</a>
         <a href="#collaborate" class="hover:text-purple-400">Collaborate</a>
       </nav>
@@ -334,6 +335,18 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
     </div>
   </section>
 
+  <!-- Try it -->
+  <section id="try" class="py-14 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-gray-800">
+    <h2 class="text-3xl font-extrabold text-white mb-3">Try it</h2>
+    <p class="text-gray-400 mb-6 max-w-3xl">Demo builds of BitChord with OpenCanvas, so you can see it on your own songs without building anything. Test builds, not official BitChord releases.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card rounded-2xl p-6"><h3 class="text-white font-bold mb-1">Windows</h3><p class="text-sm text-gray-400">Portable zip: unzip and run <code>BitChord.exe</code>. Unsigned, so SmartScreen may warn.</p></div>
+      <div class="glass-card rounded-2xl p-6"><h3 class="text-white font-bold mb-1">Android</h3><p class="text-sm text-gray-400">Debug APK for arm64 phones, and an x86_64 one for emulators.</p></div>
+    </div>
+    <p class="mt-6"><a href="https://github.com/Vijay-Janarthanan/OpenCanvas/releases" target="_blank" rel="noopener" class="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold inline-block">Download from Releases</a></p>
+    <p class="text-xs text-gray-500 mt-4">Play a song without label artwork, open the full player and seek: the video follows. Checksums and notes are on the release page. BitChord is GPLv3; the source of the builds is <a class="text-purple-400" href="https://github.com/kushagrasinghx/BitChord/pull/646" target="_blank" rel="noopener">the pull request branch</a>.</p>
+  </section>
+
   <!-- Status -->
   <section id="status" class="py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-gray-800">
     <h2 class="text-3xl font-extrabold text-white mb-6">Status, platforms and limits</h2>
@@ -363,7 +376,7 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
     <ul class="space-y-2 text-sm text-gray-300 max-w-4xl list-disc pl-5">
       <li><strong>It rides on YouTube's undocumented player endpoints</strong>, the ones its own apps use. They can change; backends are pluggable for that reason, but today's defaults may one day need an update. Check YouTube's Terms of Service for your use case.</li>
       <li><strong>A different mix, a live cut or a cover has no map</strong>, so it gets no canvas (the still cover stays) instead of a wrong one. A heavily edited video is aligned piecewise and unmatched stretches are hidden.</li>
-      <li><strong>In BitChord, label canvases keep first refusal</strong> (Apple, Tidal, Spotify, community loops). If they are still working after 1.2 s the music video goes up meanwhile, and a label clip replaces it if one turns up.</li>
+      <li><strong>In BitChord a synced music video wins over a label's short loop</strong> (Apple, Tidal, Spotify, community); the label sources are only the fallback for songs without a video that lines up.</li>
       <li><strong>Measured on an emulator and a desktop, not on phones.</strong> 720p decode cost and battery are not measured.</li>
       <li>Maps are measured from the audio <em>as your player plays it</em>: pass the id that matches the master you play (or <code>songAudio</code>).</li>
     </ul>
