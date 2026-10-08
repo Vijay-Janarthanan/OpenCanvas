@@ -50,7 +50,7 @@ internal class SyncStore(
         val file = fileFor(trackVideoId, videoId) ?: return
         val temporary = File(file.parentFile, "${file.name}.tmp")
         try {
-            file.parentFile.mkdirs()
+            file.parentFile?.mkdirs()
             temporary.writeText(encode(trackVideoId, videoId, offset))
             if (!temporary.renameTo(file)) {
                 file.delete()
