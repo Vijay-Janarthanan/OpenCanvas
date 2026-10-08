@@ -1,0 +1,192 @@
+{
+ "songs": [
+  {
+   "id": "J7p4bzqLvCw",
+   "title": "Blinding Lights",
+   "artist": "The Weeknd",
+   "note": "Two stretches with slightly different offsets (22.6 s and 25.2 s): the video was cut once.",
+   "songVideoId": "J7p4bzqLvCw",
+   "musicVideoId": "4NRXx6U8ABQ",
+   "confidence": 0.848,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 127500,
+     "offsetMs": 22612,
+     "rate": 1.0
+    },
+    {
+     "songStartMs": 127500,
+     "songEndMs": 201573,
+     "offsetMs": 25198,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "XVveECQmiAk",
+   "title": "luther",
+   "artist": "Kendrick Lamar & SZA",
+   "note": "An edited video: three stretches, each with its own offset, and a hard seek at every edit.",
+   "songVideoId": "XVveECQmiAk",
+   "musicVideoId": "sNY_2TEmzho",
+   "confidence": 0.98,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 32500,
+     "offsetMs": 12891,
+     "rate": 1.0
+    },
+    {
+     "songStartMs": 32500,
+     "songEndMs": 82500,
+     "offsetMs": 37975,
+     "rate": 1.0
+    },
+    {
+     "songStartMs": 82500,
+     "songEndMs": 177599,
+     "offsetMs": 76916,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "MX7FSAnRPug",
+   "title": "Loser",
+   "artist": "Tame Impala",
+   "note": "The video opens with a 45 s prologue before the song starts.",
+   "songVideoId": "MX7FSAnRPug",
+   "musicVideoId": "s3a4OQR-10M",
+   "confidence": 0.936,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 223014,
+     "offsetMs": 44785,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "KPM_BYl-EaQ",
+   "title": "Watermelon Sugar",
+   "artist": "Harry Styles",
+   "note": "The video starts 9.9 s before the song does.",
+   "songVideoId": "KPM_BYl-EaQ",
+   "musicVideoId": "E07s5ZYygMg",
+   "confidence": 0.948,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 174000,
+     "offsetMs": 9910,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "e8WoWk4b3D0",
+   "title": "Levitating",
+   "artist": "Dua Lipa",
+   "note": "Almost aligned: the song starts 0.3 s before the picture.",
+   "songVideoId": "e8WoWk4b3D0",
+   "musicVideoId": "TUVcZfQe-Kw",
+   "confidence": 0.988,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 203064,
+     "offsetMs": -311,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "9jdLnFYQh4s",
+   "title": "All The Stars",
+   "artist": "Kendrick Lamar & SZA",
+   "note": "A near-identical edit, 0.5 s offset.",
+   "songVideoId": "9jdLnFYQh4s",
+   "musicVideoId": "GfCqMv--ncA",
+   "confidence": 0.995,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 235540,
+     "offsetMs": 500,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "WKZO-CWeOVA",
+   "title": "BIRDS OF A FEATHER",
+   "artist": "Billie Eilish",
+   "note": "Video and song start together.",
+   "songVideoId": "WKZO-CWeOVA",
+   "musicVideoId": "V9PVRfjEBTI",
+   "confidence": 0.998,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 210373,
+     "offsetMs": 0,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "ffqliB42Nh4",
+   "title": "We Don't Talk Anymore",
+   "artist": "Charlie Puth",
+   "note": "The video starts 3.5 s before the song does.",
+   "songVideoId": "ffqliB42Nh4",
+   "musicVideoId": "3AtDnEC4zak",
+   "confidence": 0.99,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 217707,
+     "offsetMs": 3540,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "V2SVRJ6dcE4",
+   "title": "Bones",
+   "artist": "Imagine Dragons",
+   "note": "Video and song start together.",
+   "songVideoId": "V2SVRJ6dcE4",
+   "musicVideoId": "TO-_3tck2tg",
+   "confidence": 0.975,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 165265,
+     "offsetMs": 0,
+     "rate": 1.0
+    }
+   ]
+  },
+  {
+   "id": "0ERTPLucL_A",
+   "title": "Legends Never Die",
+   "artist": "League of Legends",
+   "note": "A 3 min 55 s song with a single offset of 44 ms.",
+   "songVideoId": "0ERTPLucL_A",
+   "musicVideoId": "4Q46xYqUwZQ",
+   "confidence": 0.995,
+   "segments": [
+    {
+     "songStartMs": 0,
+     "songEndMs": 235000,
+     "offsetMs": 44,
+     "rate": 1.0
+    }
+   ]
+  }
+ ]
+}
