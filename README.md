@@ -49,8 +49,16 @@ A streaming app knows the song it is playing. OpenCanvas finds that song's **off
 
 Demo builds of BitChord with OpenCanvas are on the **[Releases page](https://github.com/Vijay-Janarthanan/OpenCanvas/releases)**:
 
-- **Windows:** `BitChord-OpenCanvas-windows-portable.zip` — unzip and run `BitChord.exe` (unsigned: SmartScreen may warn).
-- **Android:** `BitChord-OpenCanvas-android-arm64-debug.apk` (most phones) or the x86_64 one for emulators.
+<div align="center">
+
+[![Download for Windows](https://img.shields.io/badge/Download-Windows%20(zip%2C%20308%20MB)-0078D6?style=for-the-badge&logo=windows)](https://github.com/Vijay-Janarthanan/OpenCanvas/releases/download/V1.1-demo/BitChord-OpenCanvas-windows-portable.zip)
+[![Download for Android](https://img.shields.io/badge/Download-Android%20(APK%2C%2086%20MB)-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Vijay-Janarthanan/OpenCanvas/releases/download/V1.1-demo/BitChord-OpenCanvas-android-arm64-debug.apk)
+
+</div>
+
+- **Windows 10/11 (x64):** unzip and run `BitChord.exe` (unsigned: SmartScreen may warn → "More info" → "Run anyway").
+- **Android (arm64, most phones):** install the APK (allow "install unknown apps"). On an emulator use the [x86_64 build](https://github.com/Vijay-Janarthanan/OpenCanvas/releases/download/V1.1-demo/BitChord-OpenCanvas-emulator-x86_64-debug.apk).
+- Checksums and notes: [Releases page](https://github.com/Vijay-Janarthanan/OpenCanvas/releases).
 
 Play a song without label artwork, open the full player, then seek: the video follows. These are test builds, not official BitChord releases; checksums and notes are on the release page. BitChord is GPLv3 and the source of the builds is [the pull request branch](https://github.com/kushagrasinghx/BitChord/pull/646).
 
