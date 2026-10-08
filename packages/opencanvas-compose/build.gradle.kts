@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.android.library")
+    id("maven-publish")
     id("org.jetbrains.compose")
     id("org.jetbrains.kotlin.plugin.compose")
 }
@@ -61,3 +62,6 @@ tasks.withType<Test> {
     maxHeapSize = "192m"
     systemProperty("java.awt.headless", "true")
 }
+
+group = "com.github.Vijay-Janarthanan.OpenCanvas"
+version = "1.0.0"
