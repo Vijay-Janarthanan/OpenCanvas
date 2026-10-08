@@ -251,7 +251,7 @@ Bring your own resolver by implementing [`StreamBackend`](packages/opencanvas-co
 
 - **It rides on YouTube's undocumented player endpoints** (the same ones its own apps use). They can change; the backends are pluggable for that reason, but today's defaults may need an update one day. Check YouTube's Terms of Service for your use case — OpenCanvas streams from YouTube's servers and stores nothing of YouTube's besides the numbers of the map.
 - **A different mix, a live cut or a cover has no map**, so it gets no canvas (the still cover stays) rather than a wrong one. A heavily edited video is aligned piecewise and the unmatched stretches are hidden.
-- **Label canvases keep first refusal in BitChord** (Apple/Tidal/Spotify/community loops): OpenCanvas is the fallback, so a song with an Apple loop shows the loop. If the label sources are still working after 1.2 s the music video goes up meanwhile, and a label clip replaces it if one turns up.
+- **In BitChord a synced music video wins over a label's short loop** (Apple/Tidal/Spotify/community); the label sources are only the fallback for songs without a video that lines up.
 - **We have measured on an emulator and a desktop, not on phones.** 720p decode cost and battery have not been measured.
 - Maps are measured from the song's audio *as the player plays it*; if your player plays a different master than the YouTube Music id you pass, pass the right id (or `songAudio`).
 

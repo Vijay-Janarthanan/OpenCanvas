@@ -363,7 +363,7 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
     <ul class="space-y-2 text-sm text-gray-300 max-w-4xl list-disc pl-5">
       <li><strong>It rides on YouTube's undocumented player endpoints</strong>, the ones its own apps use. They can change; backends are pluggable for that reason, but today's defaults may one day need an update. Check YouTube's Terms of Service for your use case.</li>
       <li><strong>A different mix, a live cut or a cover has no map</strong>, so it gets no canvas (the still cover stays) instead of a wrong one. A heavily edited video is aligned piecewise and unmatched stretches are hidden.</li>
-      <li><strong>In BitChord, label canvases keep first refusal</strong> (Apple, Tidal, Spotify, community loops). If they are still working after 1.2 s the music video goes up meanwhile, and a label clip replaces it if one turns up.</li>
+      <li><strong>In BitChord a synced music video wins over a label's short loop</strong> (Apple, Tidal, Spotify, community); the label sources are only the fallback for songs without a video that lines up.</li>
       <li><strong>Measured on an emulator and a desktop, not on phones.</strong> 720p decode cost and battery are not measured.</li>
       <li>Maps are measured from the audio <em>as your player plays it</em>: pass the id that matches the master you play (or <code>songAudio</code>).</li>
     </ul>

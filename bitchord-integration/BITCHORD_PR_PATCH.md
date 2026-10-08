@@ -29,11 +29,7 @@ agree the shape first (see "How to split it" below). Library: https://github.com
 
 ### Summary
 
-When no label source has a canvas for a track, BitChord now looks for the artist's **official music video**,
-checks from the audio that it really is the same recording, measures how the song's timeline maps onto the
-video's, and plays it behind the player **at the song's position**: it jumps when the user seeks, starts with
-the next track, never loops, and is hidden in stretches of the song the video has no scene for. Label canvases
-keep first refusal; this is the fallback that makes the canvas appear for the long tail.
+The music video is asked first and wins when it provably lines up with the song; label canvases (Apple, Tidal, Spotify, community) remain the fallback for songs without one.
 
 Everything happens inside the app. There is no server, no helper process, no account and no API key. The sync is
 measured from the **headers of two small MP4 files** (about 0.3 MB each) and a few milliseconds of arithmetic;
@@ -97,10 +93,7 @@ One Windows machine, home connection, empty cache, no community maps, final code
 
 ### Behaviour changes to existing code (please read these)
 
-1. **Label sources keep first refusal, with a head start.** If they are still working after 1.2 s and the music
-   video is already in hand, the video is shown meanwhile (`PlayerHost.canvasFor(song, provisional)`); a label clip
-   replaces it if one turns up. Without this the canvas waits for Apple's cold token, the search, the community
-   manifest and Spotify in turn (≈ 4 s on a cold start in my runs).
+1. **The music video is asked first.** A synced music video beats a label's short loop; the label sources run only when there is none (saving their requests). The lookup is not queued behind them.
 2. **The music-video lookup starts when the track starts** (`prefetch`) and again, independent of the label
    lookup's lock, when a screen asks — it was queued behind the label chain.
 3. **Bug fix in `firstHit` (both Android and desktop):** it used `runCatching { source() }`, which also swallows
