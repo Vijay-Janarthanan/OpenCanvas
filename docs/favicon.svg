@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="OpenCanvas">
+  <defs>
+    <linearGradient id="g" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="0.55" stop-color="#ec4899"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect x="148" y="40" width="216" height="432" rx="48" fill="url(#g)"/>
+  <path d="M214 150 L214 270 L318 210 Z" fill="#fff"/>
+  <g fill="#fff">
+    <rect x="189" y="336" width="16" height="30" rx="8" opacity=".75"/>
+    <rect x="219" y="316" width="16" height="70" rx="8"/>
+    <rect x="249" y="296" width="16" height="110" rx="8"/>
+    <rect x="279" y="316" width="16" height="70" rx="8"/>
+    <rect x="309" y="336" width="16" height="30" rx="8" opacity=".75"/>
+  </g>
+</svg>

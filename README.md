@@ -1,4 +1,6 @@
-# 🎬 OpenCanvas
+<p align="center"><img src="assets/brand/logo-mark.svg" width="96" alt="OpenCanvas logo" /></p>
+
+# OpenCanvas
 
 > **The official music video of any song, playing full-screen behind your player and locked to the song — it jumps when the user seeks, starts with the next track, and never loops. Runs inside your app on Android and desktop JVM: no server, no helper process, no API key.**
 > *Written by **Vijay Janarthanan**, Full Stack Developer • Apache 2.0*
