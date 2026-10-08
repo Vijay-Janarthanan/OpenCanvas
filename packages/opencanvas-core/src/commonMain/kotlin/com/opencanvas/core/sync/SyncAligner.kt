@@ -16,6 +16,8 @@ import kotlin.math.sqrt
  * @property segments The song-to-video map; empty on failure. See [SyncSegment] for the offset contract.
  * @property error Why no trustworthy map was found, or null when [segments] is a usable answer.
  */
+private const val MAX_LEAD_IN_MS = 30_000L
+
 class AlignResult(
     val offsetMs: Long,
     val confidence: Double,
@@ -28,6 +30,18 @@ class AlignResult(
      * [rate] x stretched time): each segment gets that rate and its offset converted from the stretched
      * timeline back to the video's own.
      */
+    /**
+     * The first segment reaches back to the start of the song when the lead-in it leaves unmatched is
+     * short (an intro the music video does not share windows with): the same offset and speed carry
+     * on, so the picture is there from the first second instead of appearing part-way in.
+     */
+    internal fun fromTheStart(): AlignResult {
+        val first = segments.firstOrNull() ?: return this
+        if (first.songStartMs <= 0L || first.songStartMs > MAX_LEAD_IN_MS) return this
+        val extended = SyncSegment(0L, first.songEndMs, first.offsetAtMs(0L), first.ncc, first.rate)
+        return AlignResult(offsetMs, confidence, coverage, listOf(extended) + segments.drop(1), error)
+    }
+
     internal fun atRate(rate: Double): AlignResult {
         val converted = segments.map {
             SyncSegment(it.songStartMs, it.songEndMs, ((rate - 1.0) * it.songStartMs + rate * it.offsetMs).roundToLong(), it.ncc, rate)
@@ -137,7 +151,7 @@ object SyncAligner {
         params: AlignParams = AlignParams.ENVELOPE,
     ): AlignResult {
         val plain = alignAtRate(track, video, sampleRate, params)
-        if (plain.error == null && plain.confidence >= RATE_SEARCH_BELOW) return plain
+        if (plain.error == null && plain.confidence >= RATE_SEARCH_BELOW) return plain.fromTheStart()
         // A film video often plays the song faster or slower than the album track (a PAL transfer is
         // 25/24 off, other masters differ by more): look for a speed at which the two do line up, coarse
         // grid first and then around the best, and keep it only when it clearly beats the plain fit.
@@ -157,7 +171,7 @@ object SyncAligner {
             rate += RATE_STEP
         }
         if (bestRate != 1.0) for (delta in doubleArrayOf(-0.005, -0.0025, 0.0025, 0.005)) tryRate(bestRate + delta)
-        return best
+        return best.fromTheStart()
     }
 
     private fun stretch(video: FloatArray, rate: Double): FloatArray {
