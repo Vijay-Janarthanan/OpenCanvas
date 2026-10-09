@@ -88,6 +88,10 @@ One Windows machine, home connection, empty cache, final engine
    to send it separately.
 3. The engine's sessions survive a collector that stops listening for 4 s, so a restarted request finds the work its
    predecessor began.
+4. **Misses that the music-video lookup took part in are cached for one minute, not three hours** (Android and desktop),
+   and Android drops remembered misses when the connection changes. The lookup gives up quietly on a slow or dropped
+   connection and a failure is indistinguishable from "no video", so the three-hour negative cache could hide a video
+   that exists until the app restarted. Hits and the label sources' misses keep their three hours.
 
 ### Network use
 

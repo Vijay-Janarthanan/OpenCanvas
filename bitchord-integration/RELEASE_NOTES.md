@@ -10,6 +10,10 @@ the music video behind a song, locked to it, without building anything. They are
 | `BitChord-OpenCanvas-emulator-x86_64-debug.apk` | Android emulator / x86 devices | |
 | `SHA256SUMS.txt` | | verify with `sha256sum -c SHA256SUMS.txt` (or `certutil -hashfile <file> SHA256` on Windows) |
 
+## What changed in this build
+- **Fixed: a video that sometimes did not play on a weak connection.** A lookup that failed or timed out (easy on mobile data) was remembered as "this song has no video" for three hours, until the app restarted. A miss is now retried after a minute, and remembered misses are dropped when the connection changes (Wi-Fi to mobile data or back). Android and Windows.
+- On mobile data the video also needs **Settings → Animated cover art → Play animated cover over cellular** to be on (it is off by default); with it off, the still cover stays and nothing is fetched.
+
 ## What to try
 1. Play a song that has no label motion artwork (regional or older songs work well) and open the full player.
 2. The music video should start with the song. Seek in the song: the video should jump to the matching second.
