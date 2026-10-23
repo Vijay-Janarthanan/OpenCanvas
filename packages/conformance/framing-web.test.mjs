@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { WebSubjectCamera } from '../../docs/engine/opencanvas-engine.mjs';
+const camera=new WebSubjectCamera(16/9,9/16);
+const face=x=>[x-.04,.2,x+.04,.4,.95];
+const update=(faces,t,cut=false)=>JSON.parse(camera.update(JSON.stringify({faces,people:[]}),t,cut));
+assert.ok(update([face(.8)],0).cx>.7);
+assert.equal(update([face(.15),face(.85)],1,true).fitFullFrame,true);
+assert.equal(update([],2,true).fitFullFrame,true);
+assert.ok(update([face(.2)],.5,true).cx<.3);
+console.log('Browser framing policy: actor, group, no-subject and seek cases passed.');

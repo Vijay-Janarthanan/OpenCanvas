@@ -75,6 +75,23 @@ private class CountingReader(private val source: JsRangeReader) : RangeReader {
 
 private val json = Json { encodeDefaults = true }
 
+@Serializable
+private class WebSubjects(val faces: List<List<Float>> = emptyList(), val people: List<List<Float>> = emptyList())
+
+/** The native camera policy in the browser. Inputs are detection boxes; this is not a browser detector. */
+@OptIn(ExperimentalJsExport::class)
+@JsExport
+class WebSubjectCamera(sourceAspect: Double, targetAspect: Double) {
+    private val camera = com.opencanvas.core.filter.SubjectCamera(sourceAspect.toFloat(), targetAspect.toFloat())
+    fun update(subjectsJson: String, videoTimeSec: Double, sceneCut: Boolean): String {
+        val subjects = json.decodeFromString<WebSubjects>(subjectsJson)
+        fun boxes(values: List<List<Float>>) = values.filter { it.size == 5 && it.all(Float::isFinite) }.map {
+            com.opencanvas.core.models.DetectionBox(it[0], it[1], it[2], it[3], it[4])
+        }
+        return json.encodeToString(camera.update(boxes(subjects.faces), boxes(subjects.people), videoTimeSec, sceneCut))
+    }
+}
+
 // The same limits the apps use to refuse a still picture with a soundtrack (CanvasSession).
 private const val STILL_PICTURE_KBPS = 40.0
 private const val STILL_PICTURE_MOTION = 0.12

@@ -3,6 +3,11 @@ package com.opencanvas.core.stream
 import com.opencanvas.core.matcher.VideoCandidate
 import com.opencanvas.core.matcher.VideoMatcher
 import org.junit.Test
+import kotlinx.coroutines.runBlocking
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -24,6 +29,37 @@ class MusicVideoSearchTest {
 
     private fun page(vararg items: String) =
         "<html><body><script>var ytInitialData = {\"contents\":{\"items\":[${items.joinToString(",")}]}};</script></body></html>"
+
+    @Test
+    fun aSongAudioHitDoesNotSuppressTheReversedFilmTitleFallback() = runBlocking {
+        val queries = ArrayList<String>()
+        val client = OkHttpClient.Builder().addInterceptor { chain ->
+            val query = chain.request().url.queryParameter("search_query").orEmpty()
+            queries += query
+            val body = if (query.startsWith("\"Tappulu Tippulu\"")) {
+                page(renderer("FILMVIDEO01", "Tappulu Tippulu Song 4K | Godavari", "TeluguOne Music", "4:20", "BADGE_STYLE_TYPE_VERIFIED"))
+            } else {
+                page(renderer("SONGAUDIO01", "Tippulu Tappulu", "Shreya Ghoshal", "4:23", "BADGE_STYLE_TYPE_VERIFIED_ARTIST"))
+            }
+            Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200)
+                .message("OK").body(body.toResponseBody()).build()
+        }.build()
+        val found = MusicVideoSearch(client).find("Tippulu Tappulu", "Shreya Ghoshal", 263, album = "Godavari")
+        assertTrue(found.any { it.videoId == "FILMVIDEO01" })
+        assertEquals(2, queries.size)
+    }
+
+    @Test
+    fun aMatchingPublisherVideoAvoidsSpeculativeFallbackRequests() = runBlocking {
+        var calls = 0
+        val client = OkHttpClient.Builder().addInterceptor { chain ->
+            calls++
+            Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200).message("OK")
+                .body(page(renderer("OFFICIAL001", "Artist - Song Name (Official Video)", "Artist", "4:00", "BADGE_STYLE_TYPE_VERIFIED_ARTIST")).toResponseBody()).build()
+        }.build()
+        assertEquals("OFFICIAL001", MusicVideoSearch(client).find("Song Name", "Artist").first().videoId)
+        assertEquals(1, calls)
+    }
 
     @Test
     fun readsChannelLengthAndBadgeOfEveryVideoResult() {

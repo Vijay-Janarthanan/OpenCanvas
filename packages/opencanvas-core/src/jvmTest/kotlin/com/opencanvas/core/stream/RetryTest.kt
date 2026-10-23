@@ -4,6 +4,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.Test
 import java.io.IOException
 import kotlin.test.assertEquals
@@ -23,6 +24,15 @@ class RetryTest {
         }
         assertEquals("answer", result)
         assertEquals(listOf(100L, 2_000L), limits)
+    }
+
+    @Test
+    fun anOuterDeadlineDoesNotStartFurtherAttempts() = runBlocking {
+        var attempts = 0
+        assertNull(withTimeoutOrNull(30) {
+            withRetry(listOf(5_000, 5_000)) { attempts++; delay(60_000); "late" }
+        })
+        assertEquals(1, attempts)
     }
 
     @Test

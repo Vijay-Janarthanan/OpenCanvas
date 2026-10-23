@@ -25,6 +25,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.Constraints
+import com.opencanvas.core.filter.FramingDecision
+import com.opencanvas.core.filter.videoViewport
+import kotlin.math.roundToInt
 import com.opencanvas.core.filter.CropKinematics
 import com.opencanvas.core.models.OpenCanvasMode
 import com.opencanvas.core.models.OpenCanvasTrack
@@ -89,13 +94,14 @@ fun OpenCanvasPlayer(
 
     // Determine current focal center X [0.0f, 1.0f]
     val timestampSec = playbackTimeMs / 1000.0
-    val rawFocalX = track.trajectory?.cropAt(timestampSec) ?: 0.5f
-    val clampedFocalX = CropKinematics.clampFocalCenter(rawFocalX)
+    val framing = track.trajectory?.frameAt(timestampSec)
+    val rawFocalX = framing?.cx ?: .5f
+    val clampedFocalX = rawFocalX.coerceIn(0f, 1f)
 
     // Smooth focal center animation to prevent any micro-jitter
     val animatedFocalX by animateFloatAsState(
         targetValue = clampedFocalX,
-        animationSpec = tween(durationMillis = 80),
+        animationSpec = tween(durationMillis = if (framing?.isSceneCut == true) 0 else 180),
         label = "OpenCanvasFocalX"
     )
 
@@ -108,33 +114,27 @@ fun OpenCanvasPlayer(
         val containerWidth = constraints.maxWidth.toFloat()
         val containerHeight = constraints.maxHeight.toFloat()
 
-        // 16:9 source aspect ratio scaling
-        val sourceAspect = 16f / 9f
-        val videoHeight = containerHeight
-        val videoWidth = videoHeight * sourceAspect
-
-        val translationX = CropKinematics.computeTranslationOffset(
-            clampedCenterX = animatedFocalX,
-            containerWidth = containerWidth,
-            containerHeight = containerHeight,
-            videoWidth = videoWidth,
-            videoHeight = videoHeight,
-        )
+        val viewport = videoViewport(track.sourceAspectRatio, 1f, containerWidth, containerHeight,
+            FramingDecision(animatedFocalX, framing?.cy ?: .5f, framing?.fitFullFrame ?: true))
 
         // A synced video is only shown while the map says this stretch of the song has its picture
         val pictureVisible = !synced ||
             (track.syncStage == SyncStage.MEASURED && policy.isVisible(currentAudioPositionMs))
 
         // Render video surface with hardware graphicsLayer translation
-        Box(
+        Layout(
             modifier = Modifier
                 .fillMaxSize()
                 .graphicsLayer {
-                    this.translationX = translationX
                     this.alpha = if (pictureVisible) 1f else 0f
-                }
-        ) {
-            videoContent(playbackTimeMs, Modifier.fillMaxSize())
+                },
+            content = { videoContent(playbackTimeMs, Modifier.fillMaxSize()) },
+        ) { children, constraints ->
+            val child = children.single().measure(Constraints.fixed(viewport.width.roundToInt().coerceAtLeast(1),
+                viewport.height.roundToInt().coerceAtLeast(1)))
+            layout(constraints.maxWidth, constraints.maxHeight) {
+                child.place(viewport.left.roundToInt(), viewport.top.roundToInt())
+            }
         }
 
         // Attribution Badge

@@ -28,6 +28,7 @@
       } }
     }
   </script>
+  <link rel="stylesheet" href="demo/reframing.css">
   <style>
     body { background-color: #0b0f19; color: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; }
     .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #ec4899 50%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -158,7 +159,8 @@
         <span class="font-extrabold text-xl tracking-tight text-white">Open<span class="text-purple-400">Canvas</span></span>
       </a>
       <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-300">
-        <a href="#how" class="hover:text-purple-400">How it works</a>
+        <a href="#smart-framing" class="text-purple-300">Smart framing</a>
+      <a href="#how" class="hover:text-purple-400">How it works</a>
         <a href="#benchmarks" class="hover:text-purple-400">Benchmarks</a>
         <a href="#compare" class="hover:text-purple-400">Compared</a>
         <a href="#quickstart" class="hover:text-purple-400">Quickstart</a>
@@ -207,7 +209,7 @@
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-      <div class="glass-card rounded-xl p-4"><div class="text-3xl font-extrabold text-white">0.55 s</div><div class="text-xs text-gray-400 mt-1">median to a playable stream<br>(cold cache, 16 songs)</div></div>
+      <div class="glass-card rounded-xl p-4"><div class="text-3xl font-extrabold text-white">0.55 s</div><div class="text-xs text-gray-400 mt-1">historical median stream start<br>(before publisher checks, 16 songs)</div></div>
       <div class="glass-card rounded-xl p-4"><div class="text-3xl font-extrabold text-white">0.95 s</div><div class="text-xs text-gray-400 mt-1">median to the song-to-video map</div></div>
       <div class="glass-card rounded-xl p-4"><div class="text-3xl font-extrabold text-white">~0.3 MB</div><div class="text-xs text-gray-400 mt-1">read per file to measure the sync</div></div>
       <div class="glass-card rounded-xl p-4"><div class="text-3xl font-extrabold text-white">16 / 16</div><div class="text-xs text-gray-400 mt-1">songs aligned: 6 languages,<br>2000–2022</div></div>
@@ -223,7 +225,7 @@
       <div class="flow-step rounded-xl p-4"><div class="text-purple-300 font-bold mb-1">1 · Song starts</div><div class="text-gray-400">title, artist, the audio's id; the host calls <code class="text-purple-300">prefetch</code> so the work begins before any screen asks.</div></div>
       <div class="flow-step rounded-xl p-4"><div class="text-purple-300 font-bold mb-1">2 · Search and rank</div><div class="text-gray-400">structured search results scored on channel (the credited artist's own), "official video", length, verified badge; Shorts, lyric videos, live takes and fan edits fall out.</div></div>
       <div class="flow-step rounded-xl p-4"><div class="text-purple-300 font-bold mb-1">3 · Stream, two tiers</div><div class="text-gray-400">360p (itag 18) in about 0.2 s so the canvas can start; a 720p+ stream from a second client a moment later replaces it. Both asked for at once.</div></div>
-      <div class="flow-step rounded-xl p-4"><div class="text-purple-300 font-bold mb-1">4 · Verify and map</div><div class="text-gray-400">read the frame-size table of the song's and the candidate's MP4, align the loudness curves, keep the best match — the audio decides which video is real.</div></div>
+      <div class="flow-step rounded-xl p-4"><div class="text-purple-300 font-bold mb-1">4 · Verify and map</div><div class="text-gray-400">read the frame-size table of the song's and the candidate's MP4, align the loudness curves, keep a measured recording match after independent publisher and song/film checks. Audio alone cannot distinguish a fan dance.</div></div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -247,9 +249,31 @@
   </section>
 
   <!-- Benchmarks -->
-  <section id="benchmarks" class="py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-gray-800">
+  <section id="smart-framing" class="py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-gray-800">
+    <p class="text-sm text-purple-300 mb-3">NEW IN THE KOTLIN CORE SOURCE</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Keep the people in the picture.</h2>
+    <p class="text-gray-300 max-w-3xl mb-8">YuNet faces, YOLOX-Nano people and a shot-aware camera replace the fixed center crop. Follow a subject, keep a group together, and show the whole scene when a tight crop would lose the action.</p>
+    <div class="rf-layout">
+      <div class="rf-pair">
+        <figure><figcaption>Fixed center crop</figcaption><canvas id="rf-before" width="360" height="640" aria-label="Illustration of a fixed center crop"></canvas></figure>
+        <figure><figcaption>OpenCanvas framing policy</figcaption><canvas id="rf-after" width="360" height="640" aria-label="Illustration of subject-aware camera framing"></canvas></figure>
+      </div>
+      <div class="rf-controls">
+        <label for="rf-scene">Scene<select id="rf-scene"><option value="solo">One moving subject</option><option value="duet">Two people at opposite edges</option><option value="landscape">Scene without a detected person</option></select></label>
+        <label for="rf-position">Subject position<input id="rf-position" type="range" min="15" max="85" value="78"></label>
+        <button id="rf-play" type="button" aria-pressed="false">Play movement</button>
+        <p id="rf-state" class="rf-state" role="status"></p>
+        <p class="rf-note">Illustrated detections, real camera policy: this comparison runs the native policy compiled to JavaScript. Face/person inference runs in Android and desktop hosts, not in this browser demo.</p>
+        <p class="rf-note">The worker consumes uncropped decoded frames, adapts its sampling rate to inference cost and caches trajectories by video, model revision and viewport. Cuts and seeks reset the camera; uncertain scenes use full-frame fit.</p>
+        <a class="text-purple-300 underline" href="https://github.com/Vijay-Janarthanan/OpenCanvas/blob/main/docs/SMART_FRAMING.md">Integration, models and validation →</a>
+      </div>
+    </div>
+    <div class="rf-proof"><strong class="text-white">Choose the right video first.</strong> Film/album search, title variants and independent publisher evidence precede motion and audio-sync checks. A fan dance matching the song audio is insufficient; previous timing-only choices cannot bypass the new policy.<br><strong class="text-white">Measured on one Windows desktop:</strong> reference image: 12 faces, 4 people; warm combined median about 24 ms. This is one image/device, not a battery or accuracy benchmark. Physical Android measurements remain outstanding. Current source APIs are newer than the published 1.0.0 artifact. <a class="text-purple-300 underline" href="https://github.com/Vijay-Janarthanan/OpenCanvas/blob/main/docs/VALIDATION_2026-10-23.md">Current validation report: 16-song smoke check and both Godavari tracks →</a></div>
+  </section>
+
+  <section id="benchmarks" data-baseline="before-publisher-and-framing-update" class="py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-gray-800">
     <h2 class="text-3xl font-extrabold text-white mb-3">Benchmarks</h2>
-    <p class="text-gray-400 mb-8 max-w-3xl">Measured on one Windows 11 machine on a home connection, with the final code, from an empty cache and without community maps. The matrix and stream benchmarks are the manual tests in <code class="text-purple-300">packages/opencanvas-core/src/jvmTest/.../manual</code>; run them yourself with <code class="text-purple-300">OPENCANVAS_MANUAL=1</code>.</p>
+    <p class="text-gray-400 mb-8 max-w-3xl">Historical sync/stream baseline, measured before publisher-selection and subject-framing updates on one Windows 11 machine from an empty cache. These are not speed claims for the new path. Current framing results and limits appear above; repeat the matrix and stream tests with <code class="text-purple-300">OPENCANVAS_MANUAL=1</code>.</p>
 
     <h3 class="text-xl font-bold text-white mb-1">Cold start — 16 songs, 6 languages, 16 of 16 aligned</h3>
     <p class="text-sm text-gray-400 mb-4">Median 550 ms to a playable stream (451–688 ms) and 954 ms to the map (596–1 688 ms, p90 1 139 ms). "Offset" is where the song starts on the video's timeline; many videos carry the same master (offset 0).</p>
@@ -326,7 +350,7 @@
           <tr><td>Embed the YouTube player</td><td>Yes</td><td>No — plays its own audio</td><td>its UI, ads and controls</td><td>the player's own load</td></tr>
           <tr><td>yt-dlp + play the file</td><td>Yes</td><td>No — offset and seeks are yours to solve</td><td>a Python tool on the device</td><td>2.3–2.5 s to the URL, ≈ 4 s to download</td></tr>
           <tr><td>Decode both audio tracks and correlate them</td><td>Yes</td><td>Yes</td><td>downloading and decoding two full audio streams</td><td>seconds of download and CPU (not measured here)</td></tr>
-          <tr class="text-white"><td><strong>OpenCanvas</strong></td><td><strong>Yes (16/16 in our matrix)</strong></td><td><strong>Yes — segment map, seek-aware</strong></td><td><strong>nothing outside the library</strong></td><td><strong>0.55 s to a playable stream, ≈ 1 s to the map, 0–25 ms when cached</strong></td></tr>
+          <tr class="text-white"><td><strong>OpenCanvas</strong></td><td><strong>Yes (16/16 historical baseline)</strong></td><td><strong>Yes — segment map, seek-aware</strong></td><td><strong>nothing outside the library</strong></td><td><strong>0.55 s to a playable stream, ≈ 1 s to the map, 0–25 ms when cached</strong></td></tr>
         </tbody>
       </table>
     </div>
@@ -673,7 +697,7 @@ switch (policy.decide(songMs, videoMs, songPlaying: true, videoReady: ready)) {
           <tr><td>BitChord integration</td><td>🟢 Live</td><td>Android APK, Windows desktop</td></tr>
           <tr><td>Compose player (<code>opencanvas-compose</code>)</td><td>🟡 Beta</td><td>follows the map; compile-checked on JVM, not yet run in a sample app</td></tr>
           <tr><td>Looping canvas mode (YouTube "Most Replayed" window)</td><td>🟡 Beta</td><td>unchanged from 1.0, not covered by the new benchmarks</td></tr>
-          <tr><td>Subject-centred reframing (ONNX face tracker, 1-Euro filter)</td><td>🟡 Experimental</td><td>separate from the synced-video path, unchanged from 1.0</td></tr>
+          <tr><td>Subject-aware framing (YuNet + YOLOX-Nano, shot-local camera)</td><td>🟡 Current source</td><td>JVM/Android integration; real inference and policy tests; physical-device validation outstanding</td></tr>
           <tr><td>Community maps (<code>opencanvas-db</code>)</td><td>🟡 Wired in</td><td>no maps published yet</td></tr>
           <tr><td>Browser engine (Kotlin/JS: <code>measure</code>, <code>WebCanvasPolicy</code>)</td><td>🟢 Live</td><td>measures a pair of MP4 files and keeps a <code>&lt;video&gt;</code> on the song; runs the lab above</td></tr>
           <tr><td><code>@opencanvas/core</code> (TypeScript), <code>open_canvas</code> (Dart)</td><td>🟡 Partial</td><td>map and policy ported and tested against the shared vectors, plus crop kinematics and a view; no resolver or measuring (use the Kotlin core or the browser engine)</td></tr>
@@ -736,5 +760,6 @@ switch (policy.decide(songMs, videoMs, songPlaying: true, videoReady: ready)) {
     }
   </script>
   <script type="module" src="demo/lab.js"></script>
+  <script type="module" src="demo/reframing.js"></script>
 </body>
 </html>

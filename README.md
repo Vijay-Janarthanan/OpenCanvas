@@ -40,12 +40,27 @@
 
 A streaming app knows the song it is playing. OpenCanvas finds that song's **official music video**, checks that it really is the same recording, works out how the song's timeline maps onto the video's, and then keeps the picture on the right second for as long as the song plays:
 
-- **Starts at once.** The video's stream is known about half a second after the song starts (median 0.55 s on a cold cache) and the map is ready after about a second (median 0.95 s); a sharper 720p+ stream replaces the first one when it arrives.
+- **Progressive playback.** A lightweight stream can start before a sharper 720p+ stream arrives. The historical sync-only baseline measured a 0.55 s median stream and a 0.95 s map; current publisher discovery adds independent checks and can take longer.
 - **Locked to the song, not looping.** A music video is rarely the album track with pictures: it has an intro, and often edits (a bar repeated, a bar cut). OpenCanvas measures a **map** — one offset per stretch of the song — so the picture stays right through the edits, and is hidden where the video has no matching scene.
 - **Seeks and skips just work.** Seek in the song and the video jumps to the matching second; start the next track and its video begins immediately. Both are handled by a small, platform-independent policy ([`CanvasSyncPolicy`](packages/opencanvas-core/src/commonMain/kotlin/com/opencanvas/core/sync/CanvasSyncPolicy.kt)).
-- **Lightweight.** Everything is learned from the *headers* of two small MP4 files — about 0.3 MB each — and a few milliseconds of arithmetic. Nothing is decoded, nothing is downloaded in full to find the sync, and the same code runs on every platform.
+- **Lightweight.** The sync map is learned from the *headers* of two small MP4 files — about 0.3 MB each — and a few milliseconds of arithmetic. Nothing is decoded or downloaded in full to find the sync; optional subject framing uses frames the host already decodes. The shared camera policy runs across Kotlin targets; native subject detection currently supports Android/JVM.
 - **Self-contained.** One library, no daemon, no server of ours, no account or API key. It talks to YouTube's own servers the way YouTube's apps do, and nothing else.
 - **Not tied to one app.** [BitChord](https://github.com/kushagrasinghx/BitChord) is the first host, not a requirement. Any player that knows the song's title, artist and where its audio can be read can use it (see [Use it in your app](#-use-it-in-your-app)).
+
+---
+
+## Subject-aware framing and film video discovery
+
+**New in the current Kotlin core source:** the picture can follow faces and people instead of staying center-cropped. Film-aware search and publisher evidence also prevent a matching fan dance from becoming the selected music video.
+
+- **Film/album search:** combines bounded queries, title spacing and two-word ordering variants, then verifies the recording against the song.
+- **Publisher evidence before playback:** verified artist/publisher signals and relevant metadata are checked independently of audio correlation. Previous timing-only cached choices cannot bypass this policy.
+- **Local faces and body context:** YuNet plus YOLOX-Nano operate on the player's uncropped decoded frames. The camera follows within a shot, resets at cuts/seeks, and fits the full frame for groups or uncertain scenes.
+- **Shared rendering geometry:** actual source/container dimensions, both focal axes and versioned crop trajectories work across Android and desktop. A bounded worker adapts its sampling rate to inference cost.
+
+[Integration guide and measured limits](docs/SMART_FRAMING.md) · [Current validation report](docs/VALIDATION_2026-10-23.md) · [Interactive framing-policy comparison](https://vijay-janarthanan.github.io/OpenCanvas/#smart-framing)
+
+These APIs are in the current source; the older 1.0.0 artifact below predates them. Native detector support is Android/JVM. The browser comparison runs the same camera policy with illustrated detection boxes. Physical-device battery/thermal measurements remain outstanding.
 
 ---
 
@@ -85,7 +100,7 @@ flowchart LR
     H --> I["Your video player"]
 ```
 
-**Why frame sizes?** An AAC audio track is a sequence of frames, and the *size* of each frame follows the loudness and busyness of the music. The table of frame sizes sits in the file's header (`moov`), so reading about 300 KB of each of the two files gives a loudness-like curve for the song and for the video — no audio is downloaded or decoded. The two curves are aligned with FFT cross-correlation in 10-second windows, and a Viterbi pass picks one offset per window, charging for every change of offset (a chorus a minute away is a different place, not an edit). Consecutive windows with one offset become a segment. The candidate that lines up best wins, which is also what separates the official video from a lyric video, a live take or a re-upload; a "video" that is a still picture (under 40 kbit/s of video) is rejected by its bitrate.
+**Why frame sizes?** An AAC audio track is a sequence of frames, and the *size* of each frame follows the loudness and busyness of the music. The table of frame sizes sits in the file's header (`moov`), so reading about 300 KB of each of the two files gives a loudness-like curve for the song and for the video — no audio is downloaded or decoded. The two curves are aligned with FFT cross-correlation in 10-second windows, and a Viterbi pass picks one offset per window, charging for every change of offset (a chorus a minute away is a different place, not an edit). Consecutive windows with one offset become a segment. Audio correlation checks the recording and its timing; publisher evidence separately excludes unverified fan uploads, because a fan dance can use the original audio. A candidate must pass both checks; a "video" that is a still picture (under 40 kbit/s of video) is rejected by its bitrate.
 
 **Why two tiers?** YouTube serves a 360p stream (itag 18) almost instantly, and a taller 720p/1080p stream through a second client a moment later. Both are asked for at once: the canvas starts on the first and is re-published with the sharper one (`SyncStage`: `PENDING` → `MEASURED`).
 
@@ -95,7 +110,7 @@ flowchart LR
 
 ## 📏 Measured, not claimed
 
-Everything below was measured on one Windows 11 machine on a home connection, with the final code, from an empty cache and without the community maps. Raw reports are generated by the manual tests in [`packages/opencanvas-core/src/jvmTest/.../manual`](packages/opencanvas-core/src/jvmTest/kotlin/com/opencanvas/core/manual).
+The sync/stream baseline below was measured on one Windows 11 machine before the current publisher-selection and framing changes, from an empty cache without community maps. It is historical baseline data, not a new-path speed claim. Current framing measurements and limits are in [the integration guide](docs/SMART_FRAMING.md). Raw reports are generated by the manual tests in [`packages/opencanvas-core/src/jvmTest/.../manual`](packages/opencanvas-core/src/jvmTest/kotlin/com/opencanvas/core/manual).
 
 ### Cold start, 16 songs in 6 languages — 16 of 16 aligned
 
@@ -142,7 +157,7 @@ We did not benchmark other libraries; this compares *approaches* and says what e
 | **Embed the YouTube player** | yes | no — it plays its own audio | its UI, ads and controls | the player's own load |
 | **`yt-dlp` + play the file** | yes | no — you must work out the offset and handle seeks yourself | a Python tool on the device | 2.3–2.5 s to the URL, ≈ 4 s to download |
 | **Decode both audio tracks and correlate them** | yes | yes | downloading and decoding two full audio streams | seconds of download and CPU (not measured here) |
-| **OpenCanvas** | yes (16/16 in our matrix) | **yes** — segment map, seek-aware | nothing outside the library | **0.55 s** to a playable stream, **≈ 1 s** to the map, **0–25 ms** when cached |
+| **OpenCanvas** | yes (16/16 in the historical matrix) | **yes** — segment map, seek-aware | nothing outside the library | **0.55 s** to a playable stream, **≈ 1 s** to the map, **0–25 ms** when cached |
 
 ---
 
@@ -264,7 +279,7 @@ Bring your own resolver by implementing [`StreamBackend`](packages/opencanvas-co
 | BitChord integration | 🟢 | Android APK, Windows desktop |
 | Compose player (`opencanvas-compose`) | 🟡 follows the map; compile-checked on JVM, not yet run in a sample app | Compose Multiplatform |
 | Looping canvas mode (YouTube "Most Replayed" window) | 🟡 unchanged from 1.0, not covered by the new benchmarks | JVM / Android |
-| Subject-centred reframing (ONNX face tracker, 1-Euro filter) | 🟡 experimental, unchanged from 1.0, separate from the synced-video path | JVM |
+| Subject-aware framing (YuNet + YOLOX-Nano, shot-local camera, full-frame fallback) | 🟡 current source; real inference/policy tests, physical Android validation outstanding | Android/JVM; shared camera-policy browser demo |
 | Community maps (`opencanvas-db`) | 🟡 wired in; no maps published yet | CDN |
 | Browser engine (Kotlin/JS: `measure`, `WebCanvasPolicy`) | 🟢 measures a pair of MP4 files from their headers and keeps a `<video>` on the song; runs the [live demo](https://vijay-janarthanan.github.io/OpenCanvas/#try) (`tools/build-web-engine.sh`) | Browsers, Node |
 | `@opencanvas/core` (TypeScript) and `open_canvas` (Dart) | 🟡 map and policy ported and tested against the same [vectors](packages/conformance/sync-vectors.json) as Kotlin, plus crop kinematics and a view; **no resolver or measuring** (use the Kotlin core or the browser engine) | React Native / Web / Flutter |

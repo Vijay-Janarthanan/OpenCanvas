@@ -1,0 +1,52 @@
+# Video discovery and subject-aware framing
+
+The current Kotlin core source adds film-aware discovery, independent publisher evidence and local subject framing. These APIs are newer than the published 1.0.0 coordinates in the historical quickstart. Use the current source revision until a new library tag is published. Browser detection, TypeScript/Dart detector integrations and iOS are not included.
+
+## Choose the right video
+
+Pass film/album metadata when available. Search combines artist and film queries, handles joined title words and a bounded reversed two-word title variant, and deduplicates candidates. Automatic selection requires a verified artist/publisher signal plus relevant title/artist/film metadata. A title merely saying "official" is insufficient. Verification badges are evidence, not a guarantee of ownership.
+
+Every candidate must still pass the motion/still-picture check and measured song-to-video synchronization. A fan dance can contain the original recording, so an audio match alone is insufficient. Old timing-only cached choices and unverified community maps cannot bypass the new selection policy. An explicitly supplied `videoId` remains the host's deliberate choice.
+
+```kotlin
+OpenCanvas.resolveFlow(
+    title = "Manasavacha", artist = "Unni Krishnan, Chitra", album = "Godavari",
+    trackVideoId = "1R-gKCrq_HE", mode = OpenCanvasMode.FULL_SYNCED_VIDEO,
+).collect { track -> /* Keep the existing measured-sync playback policy. */ }
+```
+
+## Follow the people in the picture
+
+The library consumes **uncropped decoded frames supplied by the host**. It does not add a second video decoder or download the whole video for analysis. YuNet detects faces; YOLOX-Nano detects people/body context. The camera uses subject continuity, group bounds, a dead zone and bounded movement. It resets at scene cuts and seeks. Uncertain/no-person scenes and groups that cannot fit use the full frame.
+
+```kotlin
+val analysis = OpenCanvas.observeFrames(
+    scope = playerScope, videoId = track.videoId,
+    sourceAspect = decodedWidth.toFloat() / decodedHeight,
+    targetAspect = viewWidth.toFloat() / viewHeight,
+)
+// On decoded frames. This copies a bounded sample before returning; the source buffer is reusable.
+analysis.submitBgra(decodedBgra, decodedWidth, decodedHeight, presentationTimeMs / 1000.0)
+// Android/source ARGB buffers:
+analysis.submitArgb(argbPixels, width, height, presentationTimeUs / 1_000_000.0)
+// Collect analysis.framing, then use shared geometry for your canvas or texture matrix:
+val placement = videoViewport(sourceWidth, sourceHeight, viewWidth, viewHeight, decision)
+// Close on video/viewport changes or disposal. The scope also cancels the worker.
+analysis.close()
+```
+
+Use **video presentation time**, not audio time. Keep audio/video synchronization separate. Sample the whole source: detecting only the cropped image cannot recover an actor outside it. Start with full-frame presentation until analysis arrives. Pause/background hosts should stop submitting frames. Layout changes need a worker with the new aspect; debounce animated resize events.
+
+The worker keeps one pending frame, initially samples at about 4 Hz, and lowers its sampling rate when inference is expensive. This bounds analysis pressure rather than delaying playback. The shared viewport helper supports both axes, actual source/container ratios and full-frame fit. `SmartFrameReframer.trajectory()` exports timestamped keyframes; trajectories are cached by video, source/target aspect and model/policy revision. Precomputed `OpenCanvasTrack.trajectory` values can also be rendered.
+
+The host supplies its platform ONNX Runtime artifact (JVM or Android); the core dependency is compile-only. The new framing models total about 3.9 MB. Their exact sources, SHA-256 values and MIT/Apache licence texts ship under `models/`. The previous UltraFace helper and its additional 1.2 MB model remain available in the full core artifact, but the new worker uses YuNet plus YOLOX-Nano.
+
+## Validation and limits
+
+On one Windows desktop, the OpenCV reference group produced 12 face detections and four person detections; warm combined median was about 24 ms. The existing UltraFace helper found 16 faces in about 24 ms on that image. These counts are a diagnostic comparison, not an accuracy study. Performance, thermal behavior and battery on physical Android devices remain unmeasured.
+
+Live discovery tests found measured film-video matches for both reported Godavari songs and excluded the personal-channel dance upload. Search results and stream endpoints can change. Cases without reliable publisher evidence, a readable stream or a measured sync map keep the still artwork. A framing/model failure keeps the whole video frame visible.
+
+Tests cover publisher evidence, legacy cache rejection, still uploads, edge subjects, group/full-body containment, cut/seek resets, crop boundaries, real model inference and framing-cache reuse. The website comparison supplies illustrated detection boxes to the **same camera policy compiled to JavaScript**; it does not run the native detectors in the browser.
+
+[Current validation report and reproducible checks](VALIDATION_2026-10-23.md).
