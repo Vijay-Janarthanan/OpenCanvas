@@ -22,6 +22,7 @@ The personal-channel dance upload `RRIYowOPF6s` is rejected by the publisher pol
 - Cosmotune decoded 16 actual frames from `1p1PwJrxEPA`, spanning 30–33 s plus 60, 120 and 160 s. Positive face/person detections were present; the 60 s edge actor was outside the fixed center crop and inside the subject crop. Group scenes used full-frame fit. The diagnostic deliberately runs detection twice per frame, so its timings are not production inference timings.
 - Policy checks cover edge subjects, full bodies, groups, detector flicker, no-person scenes, cuts, seeks and viewport boundaries. A short wide-composition hold avoids alternating fit/crop when a body temporarily disappears from detection.
 - Browser comparison uses illustrated detections with the same Kotlin camera policy compiled to JavaScript. It does not run the native detectors.
+- The Android AAR archive check confirms both pinned model hashes; this catches missing resource packaging that compilation/JVM tests cannot detect.
 - Android host compilation/unit checks are available; real-device texture capture, GPU behavior, dropped frames, thermal load and battery remain unverified. Linux shares the desktop JVM renderer, but this run does not establish physical Linux playback.
 
 ## Reproduce

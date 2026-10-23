@@ -32,6 +32,9 @@ jobs:
       - name: Build Libraries
         run: ./gradlew assemble
 
+      - name: Verify Android model packaging
+        run: ./gradlew :packages:opencanvas-core:verifyAndroidFramingResources
+
   jitpack:
     name: Verify JitPack Build
     runs-on: ubuntu-latest

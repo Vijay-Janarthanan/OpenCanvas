@@ -39,6 +39,8 @@ Use **video presentation time**, not audio time. Keep audio/video synchronizatio
 
 The worker keeps one pending frame, initially samples at about 4 Hz, and lowers its sampling rate when inference is expensive. This bounds analysis pressure rather than delaying playback. The shared viewport helper supports both axes, actual source/container ratios and full-frame fit. `SmartFrameReframer.trajectory()` exports timestamped keyframes; trajectories are cached by video, source/target aspect and model/policy revision. Precomputed `OpenCanvasTrack.trajectory` values can also be rendered.
 
+Android Java resources explicitly include `src/jvmSharedMain/resources`: AGP does not inherit this custom Kotlin source set automatically. The `verifyAndroidFramingResources` Gradle task inspects the built AAR and checks both model hashes.
+
 The host supplies its platform ONNX Runtime artifact (JVM or Android); the core dependency is compile-only. The new framing models total about 3.9 MB. Their exact sources, SHA-256 values and MIT/Apache licence texts ship under `models/`. The previous UltraFace helper and its additional 1.2 MB model remain available in the full core artifact, but the new worker uses YuNet plus YOLOX-Nano.
 
 ## Validation and limits

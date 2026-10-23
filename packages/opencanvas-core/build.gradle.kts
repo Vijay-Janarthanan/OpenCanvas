@@ -1,3 +1,6 @@
+import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
+import java.security.MessageDigest
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -61,6 +64,8 @@ kotlin {
 }
 
 android {
+    // AGP does not inherit resources from the custom intermediate Kotlin source set.
+    sourceSets.getByName("main").resources.srcDir("src/jvmSharedMain/resources")
     namespace = "com.opencanvas.core"
     compileSdk = 36
     defaultConfig {
@@ -75,3 +80,29 @@ tasks.withType<Test> {
 
 group = "com.github.Vijay-Janarthanan.OpenCanvas"
 version = "1.0.0"
+
+// A JVM inference test cannot catch an Android archive missing its Java resources.
+tasks.register("verifyAndroidFramingResources") {
+    dependsOn("bundleDebugAar")
+    doLast {
+        val expected = mapOf(
+            "models/yunet.onnx" to "ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0",
+            "models/yolox-nano.onnx" to "c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d",
+        )
+        val found = mutableMapOf<String, String>()
+        ZipFile(layout.buildDirectory.file("outputs/aar/opencanvas-core-debug.aar").get().asFile).use { aar ->
+            ZipInputStream(aar.getInputStream(aar.getEntry("classes.jar"))).use { jar ->
+                var entry = jar.nextEntry
+                while (entry != null) {
+                    if (entry.name in expected) {
+                        found[entry.name] = MessageDigest.getInstance("SHA-256")
+                            .digest(jar.readBytes()).joinToString("") { "%02x".format(it) }
+                    }
+                    entry = jar.nextEntry
+                }
+            }
+        }
+        check(found == expected) { "Android framing models missing or changed: $found" }
+        println("Android AAR contains both pinned framing models")
+    }
+}
