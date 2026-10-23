@@ -13,6 +13,44 @@ import kotlin.test.assertTrue
 
 class MusicVideoSearchTest {
 
+    @Test
+    fun unrelatedVerifiedArtistsDoNotSuppressATitleOnlyFilmSearch() = runBlocking {
+        val queries = ArrayList<String>()
+        val client = OkHttpClient.Builder().addInterceptor { chain ->
+            val query = chain.request().url.queryParameter("search_query").orEmpty()
+            queries += query
+            val body = if (query == "\"Life Is Beautiful\" video song") {
+                page(renderer("C-5VT5JxuEQ", "Life Is Beautiful Video Song - Life Is Beautiful Movie", "Aditya Music", "4:45", "BADGE_STYLE_TYPE_VERIFIED"))
+            } else {
+                page(renderer("1-t1I6PioKU", "Life is Beautiful - Deep Music (House) [Official Video]", "Deep Music", "3:27", "BADGE_STYLE_TYPE_VERIFIED_ARTIST"))
+            }
+            Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200)
+                .message("OK").body(body.toResponseBody()).build()
+        }.build()
+        val found = MusicVideoSearch(client).find("Life Is Beautiful", "K.K", 323)
+        assertTrue(found.any { it.videoId == "C-5VT5JxuEQ" })
+        assertTrue("\"Life Is Beautiful\" video song" in queries)
+    }
+
+    @Test
+    fun anotherSongFromASameNamedFilmDoesNotStopTheTitleTrackSearch() = runBlocking {
+        val queries = ArrayList<String>()
+        val client = OkHttpClient.Builder().addInterceptor { chain ->
+            val query = chain.request().url.queryParameter("search_query").orEmpty()
+            queries += query
+            val body = if (query == "\"Life Is Beautiful\" video song") {
+                page(renderer("C-5VT5JxuEQ", "Life Is Beautiful Video Song - Life Is Beautiful Movie", "Aditya Music", "4:45", "BADGE_STYLE_TYPE_VERIFIED"))
+            } else {
+                page(renderer("w9is6878qjA", "Beautiful Girl Full Video Song - Life is Beautiful Movie", "Aditya Music", "4:44", "BADGE_STYLE_TYPE_VERIFIED"))
+            }
+            Response.Builder().request(chain.request()).protocol(Protocol.HTTP_1_1).code(200)
+                .message("OK").body(body.toResponseBody()).build()
+        }.build()
+        val found = MusicVideoSearch(client).find("Life Is Beautiful", "K.K", 323, album = "Life Is Beautiful")
+        assertTrue(found.any { it.videoId == "C-5VT5JxuEQ" })
+        assertTrue(queries.size > 1)
+    }
+
     private fun renderer(
         id: String,
         title: String,

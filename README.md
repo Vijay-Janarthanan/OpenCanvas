@@ -54,6 +54,7 @@ A streaming app knows the song it is playing. OpenCanvas finds that song's **off
 **New in the current Kotlin core source:** the picture can follow faces and people instead of staying center-cropped. Film-aware search and publisher evidence also prevent a matching fan dance from becoming the selected music video.
 
 - **Film/album search:** combines bounded queries, title spacing and two-word ordering variants, then verifies the recording against the song.
+- **Ambiguous title tracks:** when album context is missing or shares the song's name, a different verified artist or another song from that film cannot end discovery early. A bounded title-only video-song query supplies additional candidates; publisher and audio checks still decide what can play.
 - **Publisher evidence before playback:** verified artist/publisher signals and relevant metadata are checked independently of audio correlation. Previous timing-only cached choices cannot bypass this policy.
 - **Local faces and body context:** YuNet plus YOLOX-Nano operate on the player's uncropped decoded frames. The camera follows within a shot, resets at cuts/seeks, and fits the full frame for groups or uncertain scenes.
 - **Shared rendering geometry:** actual source/container dimensions, both focal axes and versioned crop trajectories work across Android and desktop. A bounded worker adapts its sampling rate to inference cost.
