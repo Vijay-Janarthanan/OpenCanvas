@@ -66,6 +66,9 @@ jobs:
         working-directory: packages/opencanvas-js
         run: npm ci --no-audit --no-fund && npm run build && npm test
 
+      - name: Browser framing-policy conformance (deployed bundle)
+        run: node packages/conformance/framing-web.test.mjs
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
