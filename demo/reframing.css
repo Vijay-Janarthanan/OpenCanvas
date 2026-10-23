@@ -1,0 +1,11 @@
+.rf-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,.85fr);gap:2.5rem;align-items:start}
+.rf-pair{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:560px}
+.rf-pair figure{margin:0;min-width:0}.rf-pair figcaption{color:#cbd5e1;font-size:.8rem;margin:0 0 .65rem;min-height:2.8em;line-height:1.4}
+.rf-pair canvas{width:100%;height:auto;aspect-ratio:9/16;display:block;background:#05070d;border:1px solid #374151;border-radius:1rem}
+.rf-controls{display:grid;gap:1rem}.rf-controls label{display:grid;gap:.5rem;font-size:.85rem;color:#d1d5db}
+.rf-controls select,.rf-controls button{font:inherit;color:#f3f4f6;background:#111827;border:1px solid #4b5563;border-radius:.6rem;padding:.75rem}
+.rf-controls select:focus-visible,.rf-controls button:focus-visible,.rf-controls input:focus-visible{outline:2px solid #a78bfa;outline-offset:3px}
+.rf-controls button{cursor:pointer;width:fit-content}.rf-controls input{width:100%;accent-color:#a78bfa}
+.rf-state{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:#c4b5fd;min-height:2.5em}
+.rf-note{font-size:.75rem;color:#94a3b8;line-height:1.6}.rf-proof{margin-top:2rem;font-size:.8rem;line-height:1.8;color:#cbd5e1}
+@media(max-width:760px){.rf-layout{grid-template-columns:1fr}.rf-pair{max-width:480px;margin:auto}.rf-controls{max-width:480px;width:100%;margin:auto}}
