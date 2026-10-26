@@ -8,6 +8,12 @@ Pass film/album metadata when available. Search combines artist and film queries
 
 Every candidate must still pass the motion/still-picture check and measured song-to-video synchronization. A fan dance can contain the original recording, so an audio match alone is insufficient. Old timing-only cached choices and unverified community maps cannot bypass the new selection policy. An explicitly supplied `videoId` remains the host's deliberate choice.
 
+Pass the original catalogue title, including `(From "Film")` or pipe-separated movie fields. The engine extracts the film before stripping those decorations, preferring it to a compilation album. Search retries bounded alternatives after a soundtrack mismatch and rejects full-film uploads. Verified publisher evidence is required for automatic selection; unverified result lists are not a fallback.
+
+Moving artwork can have substantial motion and bitrate. The automatic policy now considers keyframe irregularity with presentation/credited-artist evidence to reject regular-GOP posters as well. Automatic cache policy 3 rechecks older choices. This heuristic is conservative, not a visual classifier; it can decline a genuine clip, and it never establishes soundtrack identity by itself.
+
+Live checks on 2026-10-26 aligned *Nilaave Vaa* with `xm9m6XTx89o` and *Andhi Mazhai* with `U7twY4U73Bw`. The animated INRECO *Germaniyin Senthen Malare* upload was rejected. Its tested film remaster reached only 3% alignment confidence against the stereo source, so a reliable replacement map was not established and artwork remains. Do not invent an offset or relax the recording threshold to make that case play.
+
 ```kotlin
 OpenCanvas.resolveFlow(
     title = "Manasavacha", artist = "Unni Krishnan, Chitra", album = "Godavari",

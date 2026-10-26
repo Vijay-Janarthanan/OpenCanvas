@@ -54,6 +54,8 @@ A streaming app knows the song it is playing. OpenCanvas finds that song's **off
 **New in the current Kotlin core source:** the picture can follow faces and people instead of staying center-cropped. Film-aware search and publisher evidence also prevent a matching fan dance from becoming the selected music video.
 
 - **Film/album search:** combines bounded queries, title spacing and two-word ordering variants, then verifies the recording against the song.
+- **Catalogue titles preserve the film:** `(From "Mouna Ragam")` and pipe-separated movie metadata are extracted before title cleanup. A compilation album cannot replace that film context. Bounded alternative queries continue when an initial candidate fails synchronization.
+- **Animated artwork stays artwork:** automatic selection also checks MP4 keyframe irregularity and presentation evidence. A moving poster, fan montage or full-movie upload cannot qualify merely by containing the soundtrack. Older automatic selections are searched again under policy 3.
 - **Ambiguous title tracks:** when album context is missing or shares the song's name, a different verified artist or another song from that film cannot end discovery early. A bounded title-only video-song query supplies additional candidates; publisher and audio checks still decide what can play.
 - **Publisher evidence before playback:** verified artist/publisher signals and relevant metadata are checked independently of audio correlation. Previous timing-only cached choices cannot bypass this policy.
 - **Local faces and body context:** YuNet plus YOLOX-Nano operate on the player's uncropped decoded frames. The camera follows within a shot, resets at cuts/seeks, and fits the full frame for groups or uncertain scenes.
@@ -62,6 +64,8 @@ A streaming app knows the song it is playing. OpenCanvas finds that song's **off
 [Integration guide and measured limits](docs/SMART_FRAMING.md) · [Current validation report](docs/VALIDATION_2026-10-23.md) · [Interactive framing-policy comparison](https://vijay-janarthanan.github.io/OpenCanvas/#smart-framing)
 
 These APIs are in the current source; the older 1.0.0 artifact below predates them. Native detector support is Android/JVM. The browser comparison runs the same camera policy with illustrated detection boxes. Physical-device battery/thermal measurements remain outstanding.
+
+Live discovery on 26 October 2026 aligned film clips for *Nilaave Vaa* (Mouna Ragam) and *Andhi Mazhai* (Raja Paarvai). The animated *Germaniyin Senthen Malare* upload was rejected, but its available 5.1 remaster did not pass recording alignment; that case keeps the cover. Video availability and soundtrack editions remain real limits.
 
 ---
 

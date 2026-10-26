@@ -33,6 +33,12 @@ object OpenCanvas {
     const val VERSION = "1.0.0"
     const val AUTHOR = "Vijay"
 
+    /**
+     * Follow the subject of the music video by cropping in. Off: the clip fills the picture the same way on
+     * every song, as before 1.0.3; on, it switched between a close crop and the whole frame while playing.
+     */
+    const val SUBJECT_FRAMING = false
+
     /** Supply uncropped pixels and actual video presentation time on one background worker. */
     fun createReframer(videoId: String, sourceAspect: Float, targetAspect: Float): com.opencanvas.core.reframer.SmartFrameReframer =
         com.opencanvas.core.reframer.SmartFrameReframer(sourceAspect = sourceAspect, targetAspect = targetAspect,
@@ -138,7 +144,8 @@ object OpenCanvas {
         album: String?,
     ): CanvasRequest {
         val song = songAudio ?: trackVideoId?.trim()?.takeIf { it.isNotEmpty() }?.let { SongAudio.YouTube(it) }
-        return CanvasRequest(title, artist, durationSec, mode, resolution, song, videoId?.trim()?.takeIf { it.isNotEmpty() }, album?.trim()?.takeIf { it.isNotEmpty() })
+        val query = com.opencanvas.core.stream.MusicVideoQuery.from(title, album)
+        return CanvasRequest(query.title, artist, durationSec, mode, resolution, song, videoId?.trim()?.takeIf { it.isNotEmpty() }, query.album)
     }
 
     /**
