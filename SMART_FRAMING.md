@@ -2,11 +2,25 @@
 
 The current Kotlin core source adds film-aware discovery, independent publisher evidence and local subject framing. These APIs are newer than the published 1.0.0 coordinates in the historical quickstart. Use the current source revision until a new library tag is published. Browser detection, TypeScript/Dart detector integrations and iOS are not included.
 
+## Cosmotune host updates
+
+Cosmotune uses a steady **4:5 portrait viewport**, controls clear of the picture and taller artist headers with a persistent still under motion artwork. Subject tracking is disabled in the current host (`SUBJECT_FRAMING = false`); the library policy below is not the app's active camera. The website comparison uses the same 4:5 target aspect to illustrate that separate policy; its detections are illustrated and its camera policy is the real compiled library policy.
+
+The [Cosmotune 1.0.10 tag](https://github.com/Vijay-Janarthanan/cosmotune/blob/v1.0.10/docs/releases/1.0.10.md) adds unreadable frame-table recovery through another stream, avoidance of replayed footage and an eight-second video-search budget. Those changes currently live in Cosmotune's bundled source and still need porting into this repository. They are not in the published 1.0.0 library artifact. See the host's [import record](https://github.com/Vijay-Janarthanan/cosmotune/blob/v1.0.10/docs/OPENCANVAS_IMPORT.json).
+
+Live sites: [OpenCanvas](https://opencanvas.shutterisland.in/), [GitHub documentation](https://vijay-janarthanan.github.io/OpenCanvas/), [Cosmotune](https://cosmotune.shutterisland.in/).
+
 ## Choose the right video
 
 Pass film/album metadata when available. Search combines artist and film queries, handles joined title words and a bounded reversed two-word title variant, and deduplicates candidates. Automatic selection requires a verified artist/publisher signal plus relevant title/artist/film metadata. A title merely saying "official" is insufficient. Verification badges are evidence, not a guarantee of ownership.
 
 Every candidate must still pass the motion/still-picture check and measured song-to-video synchronization. A fan dance can contain the original recording, so an audio match alone is insufficient. Old timing-only cached choices and unverified community maps cannot bypass the new selection policy. An explicitly supplied `videoId` remains the host's deliberate choice.
+
+Pass the original catalogue title, including `(From "Film")` or pipe-separated movie fields. The engine extracts the film before stripping those decorations, preferring it to a compilation album. Search retries bounded alternatives after a soundtrack mismatch and rejects full-film uploads. Verified publisher evidence is required for automatic selection; unverified result lists are not a fallback.
+
+Moving artwork can have substantial motion and bitrate. The automatic policy now considers keyframe irregularity with presentation/credited-artist evidence to reject regular-GOP posters as well. Automatic cache policy 3 rechecks older choices. This heuristic is conservative, not a visual classifier; it can decline a genuine clip, and it never establishes soundtrack identity by itself.
+
+Live checks on 2026-10-26 aligned *Nilaave Vaa* with `xm9m6XTx89o` and *Andhi Mazhai* with `U7twY4U73Bw`. The animated INRECO *Germaniyin Senthen Malare* upload was rejected. Its tested film remaster reached only 3% alignment confidence against the stereo source, so a reliable replacement map was not established and artwork remains. Do not invent an offset or relax the recording threshold to make that case play.
 
 ```kotlin
 OpenCanvas.resolveFlow(

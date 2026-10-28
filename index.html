@@ -248,22 +248,30 @@
     </div>
   </section>
 
-  <!-- Benchmarks -->
+  <section id="cosmotune-integration" class="py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-gray-800">
+    <p class="text-sm text-purple-300 mb-3">COSMOTUNE / 1.0.10 HOST INTEGRATION</p>
+    <h2 class="text-3xl font-extrabold text-white mb-4">A steadier 4:5 portrait picture.</h2>
+    <p class="text-gray-300 max-w-3xl mb-4">Cosmotune uses a steady, wider 4:5 portrait viewport with playback controls clear of the video and taller artist motion headers. Subject tracking is disabled in the app; the library framing comparison below illustrates an available policy rather than its active camera. The photograph stays mounted beneath replacement artwork. Uncertain recording matches keep the cover; neither video availability nor a verified publisher alone proves a matching soundtrack.</p>
+    <p class="text-gray-400 max-w-3xl mb-4">The 1.0.10 Cosmotune tag also retries unreadable MP4 frame tables through another stream, avoids replaying earlier footage and restores an eight-second video-search budget. Those repairs are in Cosmotune's bundled source; the standalone OpenCanvas repository still needs that code port. The published 1.0.0 library artifact and historical demo installers do not include the current framing APIs.</p>
+    <p class="text-gray-400 max-w-3xl"><a class="text-purple-300 underline" href="https://cosmotune.shutterisland.in/">Explore the current app</a> · <a class="text-purple-300 underline" href="https://github.com/Vijay-Janarthanan/cosmotune/blob/v1.0.10/docs/releases/1.0.10.md">1.0.10 changes and limits</a> · <a class="text-purple-300 underline" href="https://github.com/Vijay-Janarthanan/cosmotune/releases/latest">Latest published app downloads</a></p>
+  </section>
+
+  <!-- Subject framing -->
   <section id="smart-framing" class="py-14 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto border-t border-gray-800">
     <p class="text-sm text-purple-300 mb-3">NEW IN THE KOTLIN CORE SOURCE</p>
     <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Keep the people in the picture.</h2>
     <p class="text-gray-300 max-w-3xl mb-8">YuNet faces, YOLOX-Nano people and a shot-aware camera replace the fixed center crop. Follow a subject, keep a group together, and show the whole scene when a tight crop would lose the action.</p>
     <div class="rf-layout">
       <div class="rf-pair">
-        <figure><figcaption>Fixed center crop</figcaption><canvas id="rf-before" width="360" height="640" aria-label="Illustration of a fixed center crop"></canvas></figure>
-        <figure><figcaption>OpenCanvas framing policy</figcaption><canvas id="rf-after" width="360" height="640" aria-label="Illustration of subject-aware camera framing"></canvas></figure>
+        <figure><figcaption>Fixed center crop</figcaption><canvas id="rf-before" width="512" height="640" aria-label="Illustration of a fixed center crop"></canvas></figure>
+        <figure><figcaption>OpenCanvas framing policy</figcaption><canvas id="rf-after" width="512" height="640" aria-label="Illustration of subject-aware camera framing"></canvas></figure>
       </div>
       <div class="rf-controls">
         <label for="rf-scene">Scene<select id="rf-scene"><option value="solo">One moving subject</option><option value="duet">Two people at opposite edges</option><option value="landscape">Scene without a detected person</option></select></label>
         <label for="rf-position">Subject position<input id="rf-position" type="range" min="15" max="85" value="78"></label>
         <button id="rf-play" type="button" aria-pressed="false">Play movement</button>
         <p id="rf-state" class="rf-state" role="status"></p>
-        <p class="rf-note">Illustrated detections, real camera policy: this comparison runs the native policy compiled to JavaScript. Face/person inference runs in Android and desktop hosts, not in this browser demo.</p>
+        <p class="rf-note">4:5 viewport, matching Cosmotune. Illustrated detections, real camera policy: this comparison runs the native policy compiled to JavaScript. Face/person inference runs in Android and desktop hosts, not in this browser demo.</p>
         <p class="rf-note">The worker consumes uncropped decoded frames, adapts its sampling rate to inference cost and caches trajectories by video, model revision and viewport. Cuts and seeks reset the camera; uncertain scenes use full-frame fit.</p>
         <a class="text-purple-300 underline" href="https://github.com/Vijay-Janarthanan/OpenCanvas/blob/main/docs/SMART_FRAMING.md">Integration, models and validation →</a>
       </div>
@@ -589,6 +597,7 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
     </div>
 
     <h3 class="text-2xl font-bold text-white mt-14 mb-3">Install the demo builds</h3>
+    <p class="text-sm text-gray-400 mb-4">These are historical integration demos, not the latest Cosmotune installers. Use <a class="text-purple-300 underline" href="https://github.com/Vijay-Janarthanan/cosmotune/releases/latest">current Cosmotune releases</a> for the maintained app.</p>
     <p class="text-gray-400 mb-6 max-w-3xl">Demo builds of BitChord with OpenCanvas, so you can see it on your own songs without building anything. Test builds, not official BitChord releases.</p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card rounded-2xl p-6"><h3 class="text-white font-bold mb-1">Windows</h3><p class="text-sm text-gray-400">Portable zip: unzip and run <code>BitChord.exe</code>. Unsigned, so SmartScreen may warn.</p></div>
