@@ -12,6 +12,7 @@ import com.opencanvas.core.stream.CommunityMaps
 import com.opencanvas.core.stream.MusicVideoSearch
 import com.opencanvas.core.stream.StreamBackend
 import com.opencanvas.core.stream.StreamInfo
+import com.opencanvas.core.stream.isMediaStreamExpired
 import com.opencanvas.core.stream.SyncOffset
 import com.opencanvas.core.stream.SyncStore
 import com.opencanvas.core.stream.YouTubeStreamResolver
@@ -132,13 +133,18 @@ internal class CanvasSession(
         }
     }
 
-    /** True when this session is over without a usable result, so a new request should start afresh. */
-    fun isStale(): Boolean {
+    /** Retry failed results or refresh completed streams whose signed address no longer stands. */
+    fun isStale(nowMs: Long = System.currentTimeMillis()): Boolean {
         val current = state.value
         return job.isCancelled ||
             (current.done && current.track == null) ||
+            (current.done && current.track?.videoStreamUrl?.let { url ->
+                isMediaStreamExpired(url, nowMs) ||
+                    (url.startsWith("https://") || url.startsWith("http://")) &&
+                    nowMs - startedAtMs >= MAX_STREAM_AGE_MS
+            } == true) ||
             (current.done && request.song != null && current.track?.syncStage == SyncStage.NONE &&
-                System.currentTimeMillis() - startedAtMs > RETRY_AFTER_MS)
+                nowMs - startedAtMs > RETRY_AFTER_MS)
     }
 
     /** The session's tracks: the latest immediately, then every change, ending when the session is done. */
@@ -466,6 +472,7 @@ internal class CanvasSession(
 
     private companion object {
         const val RETRY_AFTER_MS = 60_000L
+        const val MAX_STREAM_AGE_MS = 20 * 60 * 1_000L
         const val ABANDON_GRACE_MS = 4_000L
         const val WARM_HOLD_MS = 30_000L
         const val RANK_PENALTY = 0.03
