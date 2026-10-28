@@ -10,7 +10,7 @@ if (section) {
   const status = section.querySelector('#rf-state');
   const source = document.createElement('canvas');
   source.width = 1280; source.height = 720;
-  let camera = new WebSubjectCamera(16 / 9, 9 / 16);
+  let camera = new WebSubjectCamera(16 / 9, 4 / 5);
   let playing = false, time = 0, last = 0, analyzed = -1;
   let frame = {cx: .5, cy: .5, fitFullFrame: true, sceneCut: true};
   let displayX = .5;
@@ -42,12 +42,12 @@ if (section) {
     }
     displayX = cut || frame.sceneCut ? frame.cx : displayX + (frame.cx-displayX)*.18;
     for(const [canvas, smart] of [[before,false],[after,true]]) {
-      const c=canvas.getContext('2d'); c.fillStyle='#05070d'; c.fillRect(0,0,360,640);
+      const c=canvas.getContext('2d'); c.fillStyle='#05070d'; c.fillRect(0,0,canvas.width,canvas.height);
       const contain = smart && frame.fitFullFrame;
-      const scale = contain ? Math.min(360/1280,640/720) : Math.max(360/1280,640/720);
+      const scale = contain ? Math.min(canvas.width/1280,canvas.height/720) : Math.max(canvas.width/1280,canvas.height/720);
       const width=1280*scale, height=720*scale;
-      const left=contain ? (360-width)/2 : Math.max(360-width,Math.min(0,180-(smart?displayX:.5)*width));
-      c.drawImage(source,left,(640-height)/2,width,height);
+      const left=contain ? (canvas.width-width)/2 : Math.max(canvas.width-width,Math.min(0,canvas.width/2-(smart?displayX:.5)*width));
+      c.drawImage(source,left,(canvas.height-height)/2,width,height);
     }
   }
   function loop(now) {
@@ -55,7 +55,7 @@ if (section) {
     if (playing) {position.value=String(50+Math.sin(time*.6)*32);paint();}
     requestAnimationFrame(loop);
   }
-  scene.addEventListener('change',()=>{camera=new WebSubjectCamera(16/9,9/16);position.disabled=scene.value!=='solo';paint(true);});
+  scene.addEventListener('change',()=>{camera=new WebSubjectCamera(16/9,4/5);position.disabled=scene.value!=='solo';paint(true);});
   position.addEventListener('input',()=>paint(true));
   play.addEventListener('click',()=>{playing=!playing;play.textContent=playing?'Pause movement':'Play movement';play.setAttribute('aria-pressed',String(playing));});
   document.addEventListener('visibilitychange',()=>{if(document.hidden){playing=false;play.textContent='Play movement';play.setAttribute('aria-pressed','false');}});

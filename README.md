@@ -2,6 +2,8 @@
 
 # OpenCanvas
 
+Live product and technical pages: [OpenCanvas on Shutter Island](https://opencanvas.shutterisland.in/) · [GitHub Pages](https://vijay-janarthanan.github.io/OpenCanvas/) · [Cosmotune app](https://cosmotune.shutterisland.in/). Cosmotune's current 1.0.10 source uses a 4:5 portrait viewport; its newest MP4/replay/search repairs remain host-side changes awaiting a standalone port. See [integration scope](docs/SMART_FRAMING.md#cosmotune-host-updates) before assuming a published library artifact includes them.
+
 > **The official music video of any song, playing full-screen behind your player and locked to the song — it jumps when the user seeks, starts with the next track, and never loops. Runs inside your app on Android and desktop JVM: no server, no helper process, no API key.**
 > *Written by **Vijay Janarthanan**, Full Stack Developer • Apache 2.0*
 

@@ -2,6 +2,14 @@
 
 The current Kotlin core source adds film-aware discovery, independent publisher evidence and local subject framing. These APIs are newer than the published 1.0.0 coordinates in the historical quickstart. Use the current source revision until a new library tag is published. Browser detection, TypeScript/Dart detector integrations and iOS are not included.
 
+## Cosmotune host updates
+
+Cosmotune uses a steady **4:5 portrait viewport**, controls clear of the picture and taller artist headers with a persistent still under motion artwork. Subject tracking is disabled in the current host (`SUBJECT_FRAMING = false`); the library policy below is not the app's active camera. The website comparison uses the same 4:5 target aspect to illustrate that separate policy; its detections are illustrated and its camera policy is the real compiled library policy.
+
+The [Cosmotune 1.0.10 tag](https://github.com/Vijay-Janarthanan/cosmotune/blob/v1.0.10/docs/releases/1.0.10.md) adds unreadable frame-table recovery through another stream, avoidance of replayed footage and an eight-second video-search budget. Those changes currently live in Cosmotune's bundled source and still need porting into this repository. They are not in the published 1.0.0 library artifact. See the host's [import record](https://github.com/Vijay-Janarthanan/cosmotune/blob/v1.0.10/docs/OPENCANVAS_IMPORT.json).
+
+Live sites: [OpenCanvas](https://opencanvas.shutterisland.in/), [GitHub documentation](https://vijay-janarthanan.github.io/OpenCanvas/), [Cosmotune](https://cosmotune.shutterisland.in/).
+
 ## Choose the right video
 
 Pass film/album metadata when available. Search combines artist and film queries, handles joined title words and a bounded reversed two-word title variant, and deduplicates candidates. Automatic selection requires a verified artist/publisher signal plus relevant title/artist/film metadata. A title merely saying "official" is insufficient. Verification badges are evidence, not a guarantee of ownership.
