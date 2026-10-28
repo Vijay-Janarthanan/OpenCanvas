@@ -28,7 +28,7 @@
       } }
     }
   </script>
-  <link rel="stylesheet" href="demo/reframing.css">
+  <link rel="stylesheet" href="demo/reframing.css?v=2a7e024bf22f">
   <style>
     body { background-color: #0b0f19; color: #e5e7eb; font-family: 'Plus Jakarta Sans', sans-serif; }
     .gradient-text { background: linear-gradient(135deg, #a78bfa 0%, #ec4899 50%, #f59e0b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -467,7 +467,7 @@ when (val action = policy.decide(songMs, video.positionMs, songPlaying, video.is
       </div>
     </div>
 
-    <div class="glass-card rounded-2xl p-6">
+    <div class="glass-card rounded-2xl p-6 overflow-x-auto">
       <h3 class="text-lg font-bold text-white mb-3">Configuration</h3>
       <table>
         <thead><tr><th>OpenCanvasConfig</th><th>Default</th><th>What it is</th></tr></thead>
@@ -769,6 +769,6 @@ switch (policy.decide(songMs, videoMs, songPlaying: true, videoReady: ready)) {
     }
   </script>
   <script type="module" src="demo/lab.js"></script>
-  <script type="module" src="demo/reframing.js"></script>
+  <script type="module" src="demo/reframing.js?v=76a084c26b6b"></script>
 </body>
 </html>
